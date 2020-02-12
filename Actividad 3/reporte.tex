@@ -119,6 +119,7 @@ Ahora se definirá una máquina de Turing que, dada una secuencia de $1$s, regre
 	$p$ & $\sigma$ & $\delta(p, \sigma)$ \\ \hline
 
 	$a$ & $\triangleright$ & $(a, \triangleright, \rightarrow)$ \\
+	$a$ & $0$ & $(b, 1, \rightarrow)$ \\
 	$a$ & $1$ & $(b, 0, \rightarrow)$ \\
 	$a$ & $\sqcup$ & $(f, \sqcup, \rightarrow)$ \\
 	$b$ & $1$ & $(b, 1, \rightarrow)$ \\
@@ -129,7 +130,7 @@ Ahora se definirá una máquina de Turing que, dada una secuencia de $1$s, regre
 	$d$ & $*$ & $(e, \sqcup, \leftarrow)$ \\
 	$d$ & $\sqcup$ & $(d, 0, \leftarrow)$ \\
 	$e$ & $0$ & $(a, 1, \rightarrow)$ \\
-	$e$ & $1$ & $(a, 1, \leftarrow)$ \\
+	$e$ & $1$ & $(e, 1, \leftarrow)$ \\
 	$f$ & $0$ & $(f, 1, \rightarrow)$ \\
 	$f$ & $\sqcup$ & $(\text{alto}, \sqcup, -)$
 	\end{tabular}
