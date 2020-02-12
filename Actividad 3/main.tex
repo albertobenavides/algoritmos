@@ -1,0 +1,267 @@
+\documentclass[final,5p,times,twocolumn]{elsarticle}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,mexico]{babel}
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{lmodern}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{amsfonts}       % blackboard math symbols
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lipsum}
+\usepackage{tabu}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\graphicspath{ {../Figuras/} }
+\extrarowsep = 1mm
+\selectlanguage{spanish}
+\usepackage[spanish,onelanguage]{algorithm2e}
+\pdfmapfile{+txfonts.map}
+
+\biboptions{sort&compress, numbers}
+
+\begin{document}
+
+\begin{frontmatter}
+\title{Pronóstico epidemiológico en México entre 2005 y 2015}
+
+\author{Alberto Benavides}
+\address{Posgrado de Ingeniería de Sistemas\\
+Facultad de Ingeniería Mecánica y Eléctrica\\
+Universidad Autónoma de Nuevo León\\
+Nuevo León, México \\}
+\ead{jose.benavidesvz@uanl.edu.mx}
+
+\begin{abstract}
+  Se clasifican entre no pronosticables y pronosticables focos epidemiológicos a partir de series de tiempo semanales proporcionadas por la Secretaria de Salud de México durante 2005 a 2015 mediante análisis de componentes temporales y preprocesamiento por tipo de estacionalidad presente en tales series de tiempo.
+  \end{abstract}
+\end{frontmatter}
+
+\section{Introducción}
+\label{sec:introduction}
+Una reciente investigación de maestría realizada por Alberto Benavides \cite{benavides2019} toma los registros epidemiológicos semanales publicados por la Secretaría de salud de México durante el periodo 2005--2015 \cite{boletin} y los agrupa por $k$-medias, un algoritmo estadístico no supervisado, a partir de las autocorrelaciones con retraso semanal de hasta un año. Dicho trabajo constituye una primera aproximación a esos datos debido a que antes estaban solamente contenidos en documentos \texttt{PDF}, impidiendo su análisis. Con los datos actualmente disponibles para analizar desde diversas aproximaciones científicas, su interés se vuelve relevante puesto que estos datos contienen potencialmente información valiosa para el gobierno mexicano que los publica \cite{datosMex}.
+
+Por otro lado, el pronóstico de aparición de focos epidemiológicos ha sido ampliamente estudiado \cite{brockwell2016, lindenEA2003, burkomEA2007, ozgurEA2014, abdullahEA2012, zinszerEA1992} y los resultados de estos estudios propician la planificación y mejor toma de decisiones respecto a las enfermedades estudiadas, por lo que esta práctica se torna relevante para instituciones de salud, farmacéuticas y gubernamentales.
+
+Este artículo presenta un estudio de los componentes temporales de los datos mencionados además de los resultados de algoritmos de pronóstico aplicados a tales datos distribuido del siguiente modo: La sección \ref{sec:literature} contiene una revisión bibliográfica de los artículos más recientes y relevantes sobre el tema de pronóstico epidemiológico; en la sección \ref{sec:background} se definen los conceptos necesarios para comprender la metodología utilizada; dicha metodología se detalla en la sección \ref{sec:metodology}; a continuación, en la sección \ref{sec:results}, se muestran los resultados de los experimentos computacionales de este estudio; las conclusiones y discusión de los resultados mencionados aparecen en la sección \ref{sec:conclusion}.
+
+\section{Revisión bibliográfica}
+\label{sec:literature}
+
+Muy recientemente \citeauthor{thompsonEA2019} \cite{thompsonEA2019} recopilaron estudios que involucran el modelado de epidemias que afectan seres humanos, plantas y animales, y proponen la necesidad de unificar estudios que involucren combinaciones de estos modelos por la interrelación que existe entre estos tres tipos de enfermedades. 
+
+En este contexto, \citeauthor{chatersEA2019} \cite{chatersEA2019} analizaron los movimientos de ganado como fuentes de infección con el uso de redes de movimiento del ganado para predecir aparición de enfermedades provenientes del contacto entre distintos grupos de animales. 
+
+Además, \citeauthor{tianEA2019} utilizaron efectivamente un modelo SARIMA para pronosticar aparición de casos epidemiológicos que afectan a manos, pies y boca con base en registros de incidencias reportadas entre 2008 y 2018 de los que estudiaron sus variaciones estacionales y periódicas. Por su parte, \citeauthor{wangEA2019} \cite{tianEA2019} predijeron ocurrencias desde datos de reportes de casos de VIH y SIDA en China durante el periodo 2005--2016 con la finalidad de monitorear y controlar estas enfermedades en Guangxi, segunda provincia china con el mayor número de estas incidencias. Pronósticos de esta misma enfermedad fueron estudiados por \citeauthor{xie2019} \cite{xie2019} con datos reportados por la OMS del estimado número de personas que padecen VIH durante 2000 a 2015 en periodos de cinco años.
+
+Por último, la relevancia de este tipo de estudios por modelos lineales, no lineales, estocásticos y determinísticos ha sido ampliamente explorada y demostrada por \citeauthor{dattnerEA2019} en un artículo publicado el año pasado \cite{dattnerEA2019}.
+
+\section{Marco teórico}
+\label{sec:background}
+
+Las herramientas utilizadas para la elaboración de este artículo y los experimentos computacionales asociados a éste fueron una computadora portátil Acer Aspire Nitro 15 con sistema operativo Windows 10 Pro de \(64\) bits, procesador Intel Core i7-8750H a \(2.20\) GHz, con \(8\) GB de memoria RAM y un disco de estado sólido Kingston SA40037480G. Los algoritmos se escribieron y ejecutaron en \texttt{Python} versión 3 \cite{python} con un extenso uso de librerías entre las que destacan \texttt{pandas} \cite{pandas}, \texttt{numpy}, \texttt{statsmodel}, \cite{linregress} y el entorno de prototipado \texttt{Jupiter} \cite{jupyter}
+
+Los registros de casos de las enfermedades están agrupados por \textit{semana epidemiológica} entendida como una medida temporal utilizada para comparar datos epidemiológicos donde la primera semana epidemiológica del año termina el primer sábado de enero \cite{arias2006}. Además, cada enfermedad tiene asociada una \textit{Clasificación Internacional Estadística de Enfermedades}, abreviada CIE por simplicidad \cite{cieManual}, dada por la Organización Mundial de la Salud con la finalidad de entender las causas y efectos que estas enfermedades tienen en la morbilidad y mortalidad de la población \cite{cieSpa}.
+
+Para pronosticar a partir de datos temporales, se requiere una \textit{serie de tiempo} de los datos. Las series de tiempo se definen como un conjunto de observaciones $X$ tomadas en un tiempo $t$ determinado \cite{brockwell2016}, en las que cada observación $x_{t}$ expresa los casos registrados de cada enfermedad a lo largo de todas las semanas epidemiológicas reportadas durante el periodo especificado. La figura \ref{timeSeriesExample} muestra un ejemplo de una serie de tiempo de números enteros generados al azar registrados en el periodo 2005 a 2015.
+
+\begin{figure} % https://tex.stackexchange.com/questions/39440/how-to-include-a-pdf-image-into-a-pdflatex-document
+  \includegraphics[width=1\linewidth]{timeSeriesExample}
+  \caption{Ejemplo de serie de tiempo de datos generados aleatoriamente con distribución normal y frecuencias anuales.}
+  \label{timeSeriesExample}
+\end{figure}
+
+Entre los componentes de una serie de tiempo se hallan la \textit{tendencia}, la \textit{estacionalidad} y los \textit{residuales} \cite{brockwell2016}. La tendencia $\beta_0$ viene dada por la pendiente que se obtiene de la regresión lineal $\hat{y}$ de las series de tiempo con observaciones $Y$, tal que
+\begin{equation}
+  \hat{y}(t, \beta) = \beta_0 + \beta_1 y_1 + \ldots + \beta_t y_t
+\end{equation}
+cuya función objetivo consiste en minimizar la suma de errores cuadrados, es decir
+\begin{equation}
+  \sum_t (y_t - \hat{y}_t)^2.
+\end{equation}
+
+La condición de que una serie de tiempo sea pronosticable es que sea \textit{estrictamente estacionaria} \cite{brockwell2016}. La estacionalidad, por su parte, permite conocer si las propiedades de una serie no cambian con el tiempo \cite{coxEA1965}. Así, dada una serie de tiempo $Y = y_t; t \in \mathbb{R}$, se considera estrictamente estacionaria si
+\begin{equation}
+  F_Y(y_{t_{1 + \tau}}, \cdots, y_{t_{n + \tau}}) = F_Y(y_{t_{1}}, \cdots, y_{t_{n}})
+\end{equation}
+para $T \in \mathbb{R}, n \in \mathbb{N}$ y $\tau \in \mathbb{R}$.
+
+A su vez, los residuales se conocen por el ruido blanco $\epsilon_i \in \mathbb{R}$ de la ecuación del modelo autorregresivo
+\begin{equation}
+  y_t = c + \omega_1 y_{t - 1} + \cdots + \omega_1 y_{t - p} + \epsilon_t.
+\end{equation}
+En esta ecuación lineal, los $\omega$ del modelo son los pesos que se ajustan a la serie de tiempo con observaciones $X$ con un retraso de $p$, dado un vector de constantes $c$ correspondientes a las intercepciones \cite{brockwell2016}.
+
+Las pruebas de hipótesis de Dikey Fuller aumentada y la de Kwiatkowski-Phillips-Schmidt-Shin permiten conocer si una serie de tiempo es estacionaria. La primera propone como hipótesis nula que $\Omega = 1$ mientras que la hipótesis alternativa es que $\Omega \neq 1$, así que si se falla en rechazar la hipótesis nula la serie de tiempo es estacionaria pero se podría convertir en estrictamente estacionaria $y'$ diferenciándola mediante
+\begin{equation}
+  \label{eq:diff}
+  y_t ' = y_{t}-y_{t-n}
+\end{equation}
+donde $n$ es el retraso estacional que en este caso $n = 7$ puesto que los datos consisten en series de tiempo tomadas cada siete días. La prueba de Kwiatkowski-Phillips-Schmidt-Shin propone como hipótesis nula que la serie de tiempo posee tendencia estacionaria y como hipótesis alternativa que $\Omega = 1$ tal que si se rechaza la hipótesis nula, la serie no es estacionaria debido a su tendencia por lo que hay que restar la pendiente $\beta_0$ de la regresión lineal a la serie de tiempo para obtener una señal $Y''$ sin tendencia. Ahora bien, en caso de que ambas pruebas den por resultado que determinada serie de tiempo no es estacionaria, tal serie de tiempo no se podría someter a pronóstico por los métodos descritos en el estado del arte ni bibliografía relacionada.
+
+Por último, el modelo de \textit{suavizamiento exponencial} es un modelo de pronóstico definido por Charles Holt en 1957 \cite{holt2004} como sigue
+\begin{equation}
+  s_{t}=\alpha \cdot x_{t}+(1-\alpha )\cdot s_{t-1}=s_{t-1}+\alpha \cdot (x_{t}-s_{t-1})
+\end{equation}
+donde $0 < \alpha < 1$ es un factor de suavizado que se aplica a la media ponderada $s_t$ entre la observación actual $x_t$ y la anterior $x_{t - 1}$.
+
+\section{Metodología}
+\label{sec:metodology}
+Tras la extracción, limpieza y conversión en series de tiempo de los datos detallada en \cite{benavides2019}, en la que se agrupan por enfermedad los casos registrados semanalmente normalizados entre la derechohabiencia del año correspondiente, se descompone cada serie de tiempo en su tendencia, componentes estacionarios y residuales además de obtener su tendencia y desviación estándar acumuladas con la finalidad de comprender el comportamiento de las enfermedades a lo largo del periodo 2005--2015.
+
+Con esta información se realizan las pruebas de Dickey Fuller y la de Kwiatkowski-Phillips-Schmidt-Shin para conocer si las series de tiempo son estacionarias. Si ambas pruebas dan por resultado que la serie de tiempo no es estacionaria, se descarta del pronóstico. Si sólo Dickey Fuller da por resultado que no es estacionaria, se diferencia la serie de tiempo. Por otro lado, si la serie de tiempo resulta no ser estacionaria sólo por la prueba de Kwiatkowski-Phillips-Schmidt-Shin, se resta a la serie de tiempo original la tendencia. Por último, si por ambas pruebas se concluye que la serie es estacionaria, dicha serie no requeriría preprocesamiento para pronosticarla.
+
+Posteriormente se separa cada serie de tiempo en una serie de tiempo de entrenamiento y una de prueba que comprenden el 70 \% y 30 \% respectivamente del total de observaciones de cada serie de tiempo. A partir de cada conjunto de entrenamiento, se ajusta un modelo de suavizamiento exponencial de Holt-Winter (con o sin estacionalidad, según la serie de tiempo) y se predicen los casos normalizados por serie de tiempo para el periodo comprendido por el conjunto de entrenamiento correspondiente.
+
+Finalmente, se comparan por modelo lineal los logaritmos de los pronósticos contra los logaritmos de los valores reales para conocer el ajuste que tiene el pronóstico propuesto.
+
+\section{Resultados}
+\label{sec:results}
+
+Debido a la extensión de las enfermedades, para cada combinación de resultados de pruebas de hipótesis para determinar estacionalidad de series de tiempo, se dará un ejemplo. Cabe señalar que ninguna serie de tiempo fue estacionaria según las dos pruebas.
+
+\subsection{Serie no estacionaria}
+
+El primer caso son las series no estacionarias, definidas como aquellas que no son estacionarias ni por Dickey Fuller ni por Kwiatkowski-Phillips-Schmidt-Shin. Un ejemplo de estas series se presenta en las figuras \ref{a05} (p. \pageref{a05}) y \ref{a05All} (p. \pageref{a05All}). En la primera aparece la serie de tiempo original, la tendencia y la desviación estándar acumuladas, y en las figuras \ref{a05Trend}, \ref{a05Seasonal} y \ref{a05Res} los componentes de tendencia, estacionalidad y residuales respectivamente. A causa de que esta serie estadísticamente no es estacionaria, no se procede a su pronóstico.
+
+\begin{figure*}
+    \includegraphics[width=1\linewidth]{a05}
+  \caption{Serie de tiempo (azul) con sus respectivas tendencia acumulada (rojo) y desviación estándar acumulada (negro).}
+  \label{a05} 
+\end{figure*}
+\begin{figure*}
+  \centering
+  \begin{subfigure}{\textwidth}
+    \includegraphics[width=1\linewidth]{a05Trend}
+  \caption{Tendencia.}
+  \label{a05Trend}  
+  \end{subfigure}  
+  \\
+  \begin{subfigure}{\textwidth}
+    \includegraphics[width=1\linewidth]{a05Seasonal}
+  \caption{Componentes estacionarios.}
+  \label{a05Seasonal}  
+  \end{subfigure}  
+  \\
+  \begin{subfigure}{\textwidth}
+    \includegraphics[width=1\linewidth]{a05Res}
+  \caption{Residuales.}
+  \label{a05Res}  
+  \end{subfigure}
+  \caption{Serie de tiempo y descomposición de la CIE A05 durante el periodo 2005--2015}
+  \label{a05All}
+\end{figure*}
+
+\subsection{Serie no estacionaria por Dickey Fuller}
+
+El segundo caso corresponde a las series de tiempo que no cumplen con ser estacionarias solamente según la prueba de Dickey Fuller. Estas series de tiempo fueron luego diferenciadas mediante la ecuación \ref{eq:diff} para luego obtener su predicción por el modelo de suavizamiento exponencial con $\alpha = 0.1$ y componente estacional de 52 semanas. La CIE A10.0 representa un ejemplo de este grupo presente en las figuras \ref{a010} (p. \pageref{a010}), \ref{a010All} (p. \pageref{a010All}) y \ref{a010Pron} (p. \pageref{a010Pron}). La primera figura muestra la serie de tiempo con sus acumulados de la tendencia y desviación estándar. El segundo grupo de figuras está compuesto  por las componentes de tendencia (figura \ref{a010Trend}), estacionalidad (figura \ref{a010Seasonal}) y residuales (figura \ref{a010Res}). Por último, el pronóstico por suavizamiento exponencial se despliega en la figura \ref{a010Pron}.
+
+\begin{figure*}
+  \includegraphics[width=\linewidth]{a010}
+\caption{Serie de tiempo (azul) con sus respectivas tendencia acumulada (rojo) y desviación estándar acumulada (negro).}
+\label{a010} 
+\end{figure*}
+\begin{figure*}
+\centering
+\begin{subfigure}{\textwidth}
+  \includegraphics[width=1\linewidth]{a010Trend}
+\caption{Tendencia.}
+\label{a010Trend}  
+\end{subfigure}  
+\\
+\begin{subfigure}{\textwidth}
+  \includegraphics[width=1\linewidth]{a010Seasonal}
+\caption{Componentes estacionarios.}
+\label{a010Seasonal}  
+\end{subfigure}  
+\\
+\begin{subfigure}{\textwidth}
+  \includegraphics[width=1\linewidth]{a010Res}
+\caption{Residuales.}
+\label{a010Res}  
+\end{subfigure}
+\caption{Serie de tiempo y descomposición de la CIE A01.0 durante el periodo 2005--2015}
+\label{a010All}
+\end{figure*}
+
+\begin{figure*}
+  \includegraphics[width=\linewidth]{a010Pron}
+  \caption{Serie de tiempo de la CIE A01.0 (azul) separada en 70 \% inicial de los datos como conjunto de entrenamiento cuyo ajuste al modelo se muestra en color negro y los valores pronosticados a partir del modelo aparecen en rojo, correspondientes al último 30 \% de los datos como conjunto de prueba.}
+  \label{a010Pron}
+\end{figure*}
+
+\subsection{Serie no estacionaria por KPSS}
+En el caso en que las series de tiempo sólo se consideran no estacionarias por su tendencia se asigna por rechazar la hipótesis nula de la prueba de Kwiatkowski-Phillips-Schmidt-Shin. Puesto que la tendencia no es estacionaria en estas series de tiempo, se procede a eliminar la tendencia de las mismas y, a partir de la señal resultante de esta diferenciación, se pronostica por suavizamiento exponencial. La CIE A03 se comparte como ejemplo de estas series de tiempo en las figuras \ref{a03} (p. \pageref{a03}), \ref{a03All} (p. \pageref{a03All}) y \ref{a03Pron} (p. \pageref{a03Pron}). La primera figura muestra la serie de tiempo con sus acumulados de la tendencia y desviación estándar. El segundo grupo de figuras está compuesto  por las componentes de tendencia (figura \ref{a03Trend}), estacionalidad (figura \ref{a03Seasonal}) y residuales (figura \ref{a03Res}). Por último, el pronóstico por suavizamiento exponencial se despliega en la figura \ref{a03Pron}.
+
+\begin{figure*}
+  \includegraphics[width=\linewidth]{a03}
+\caption{Serie de tiempo (azul) con sus respectivas tendencia acumulada (rojo) y desviación estándar acumulada (negro).}
+\label{a03} 
+\end{figure*}
+\begin{figure*}
+\centering
+\begin{subfigure}{\textwidth}
+  \includegraphics[width=1\linewidth]{a03Trend}
+\caption{Tendencia.}
+\label{a03Trend}  
+\end{subfigure}  
+\\
+\begin{subfigure}{\textwidth}
+  \includegraphics[width=1\linewidth]{a03Seasonal}
+\caption{Componentes estacionarios.}
+\label{a03Seasonal}  
+\end{subfigure}  
+\\
+\begin{subfigure}{\textwidth}
+  \includegraphics[width=1\linewidth]{a03Res}
+\caption{Residuales.}
+\label{a03Res}  
+\end{subfigure}
+\caption{Serie de tiempo y descomposición de la CIE A03 durante el periodo 2005--2015}
+\label{a03All}
+\end{figure*}
+
+\begin{figure*}
+  \includegraphics[width=\linewidth]{a03Pron}
+  \caption{Serie de tiempo de la CIE A03 (azul) separada en 70 \% inicial de los datos como conjunto de entrenamiento cuyo ajuste al modelo se muestra en color negro y los valores pronosticados a partir del modelo aparecen en rojo, correspondientes al último 30 \% de los datos como conjunto de prueba.}
+  \label{a03Pron}
+\end{figure*}
+
+\subsection{Series de tiempo estacionarias}
+Las pruebas de hipótesis para comprobar estacionalidad no coincidieron con ninguna de las series de tiempo con las que se realiza este estudio.
+
+\subsection{Relación real contra pronóstico}
+
+Ahora se muestra, en la figura \ref{LogPron}, la relación lineal estadísticamente significativa que existe entre el pronóstico del primer valor predicho del conjunto de prueba contra el último valor presente en el conjunto de entrenamiento, esto para todas las CIEs. Se logra un error de $0.0552$ y una pendiente de $0.9288$.
+
+\begin{figure}
+  \includegraphics[width=1\linewidth]{LogPron}
+  \caption{Relación lineal entre los logaritmos del primer dato pronosticado contra el último presente en los conjuntos de prueba y entrenamiento, respectivamente, para todas las CIEs presentes en el estudio.}
+  \label{LogPron}
+\end{figure}
+
+\section{Conclusiones y discusión}
+\label{sec:conclusion}
+
+Este estudio consistió en una metodología robusta de pronóstico para series de tiempo epidemiológicas con resultados satisfactorios tras el estudio, comprensión y preprocesamiento de estas series de tiempo. Destaca como relevante el hecho de que con esta metodología no se logra pronosticar con intervalos de confianza superiores al 95 \% las series de tiempo consideradas no estacionarias por las pruebas de hipótesis de Dickey Fuller ni por Kwiatkowski-Phillips-Schmidt-Shin, esto porque sus propiedades tales como la pendiente y la desviación estándar no permanecen en el paso del tiempo. 
+
+Sin embargo, se muestran como estrategias indispensables para el pronóstico de series de tiempo el uso de funciones que diferencien las series de tiempo en señales sin tendencia para el caso de las series de tiempo que tengan tendencia no estacionaria según Kwiatkowski-Phillips-Schmidt-Shin, o diferenciándolas por resta de la serie de tiempo original menos la serie de tiempo con retraso periódico cuando no son estacionarias por Dickey Fuller.
+
+Es importante remarcar que un pronóstico más preciso se logra al establecer las frecuencias estacionales correctas, que en este caso fueron de 52 semanas dado que la periodicidad de los ciclos mostrados por los componentes estacionarios coincidía con ciclos anuales de 52 semanas cada uno. Este ajuste permite incluir en el modelo la frecuencia y amplitud del conjunto de entrenamiento previamente seleccionado y plasmarlo en los resultados pronosticados.
+
+Pese a que el análisis intuitivo de los componentes estacionarios junto a los acumulados de la tendencia y desviación estándar de las series del tiempo pueden dar una idea aproximada de la estacionalidad de la misma, las pruebas de hipótesis se presentan como una herramienta definitiva para el preprocesamiento de este tipo de datos con la finalidad de conocer su pronosticabilidad. 
+
+A partir de estos resultados, es posible considerar otras variables usualmente empleadas en modelos de pronóstico como las autocorrelaciones y autocorrelaciones parciales a la par que los coeficientes de Fourier representados en espectrogramas, todas ellas para mejorar la precisión de los pronósticos en modelos ARIMA (que incluyen modelos ARMA, AR y AM) para series de tiempo no estacionales y SARIMA para series estacionales. 
+
+Así también, se puede aproximar el pronóstico de series de tiempo no estacionarias según criterios de Dickey Fuller ni Kwiatkowski-Phillips-Schmidt-Shin por suavizamientos exponenciales simples cuando hay pocos e irregulares datos sin tendecia, modelos lineales de Holt para datos con tendencia moderada o modelos de tendencia amortiguada de Holt, estos últimos para series de tiempo con tendencias fuertemente marcadas.
+
+\section{Agradecimientos}
+Agradezco primeramente al CONACyT por otorgarme una beca que me ha permitido dedicarme a la investigación y compartir mis conocimientos adquiridos en el proceso, a la Secretaría de Salud de México que hace públicos los datos con la finalidad de que puedan ser de utilidad para investigadores y público en general y a mis asesores Elisa Schaeffer y Arturo Berrones del Posgrado de Ingeniería de Sistemas de quienes he aprendido (y sigo aprendiendo) sobre ciencia de datos, metodología indispensable para el tratamiento de esta información.
+
+\bibliographystyle{plainnat}
+\bibliography{../Biblio}
+
+
+\end{document}

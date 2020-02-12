@@ -1,0 +1,145 @@
+% https://es.overleaf.com/latex/templates/project-report/jpzczmpsdzwm
+
+%%% Preamble
+\documentclass[paper=leter, fontsize=11pt]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,mexico]{babel}
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{lmodern}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{lipsum}
+
+\usepackage[protrusion=true,expansion=true]{microtype}	
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}	
+\usepackage{url}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\graphicspath{ {.} }
+
+\selectlanguage{spanish}
+\usepackage[spanish,onelanguage]{algorithm2e}
+
+
+%%% Custom sectioning
+\usepackage{sectsty}
+\allsectionsfont{\centering \normalfont\scshape}
+
+
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}											% No page header
+\fancyfoot[L]{}											% Empty 
+\fancyfoot[C]{}											% Empty
+\fancyfoot[R]{\thepage}									% Pagenumbering
+\renewcommand{\headrulewidth}{0pt}			% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+
+%%% Equation and float numbering
+\numberwithin{equation}{section}		% Equationnumbering: section.eq#
+\numberwithin{figure}{section}			% Figurenumbering: section.fig#
+\numberwithin{table}{section}				% Tablenumbering: section.tab#
+
+
+%%% Maketitle metadata
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
+
+\title{
+		%\vspace{-1in} 	
+		\usefont{OT1}{bch}{b}{n}
+		\normalfont \normalsize \textsc{Posgrado de Ingeniería de Sistemas} \\ [25pt]
+		\horrule{0.5pt} \\[0.4cm]
+		\huge Máquinas de Turing \\
+		\horrule{2pt} \\[0.5cm]
+}
+\author{
+		\normalfont 								\normalsize
+        Alberto Benavides\\[-3pt]		\normalsize
+        \today
+}
+\date{}
+
+
+%%% Begin document
+\begin{document}
+\maketitle
+\section{Máquinas de Turing}
+Una máquina de Turing $M = (K, \Sigma, \delta, s)$ está definida por un conjunto de estados $K$ entre los que se incluyen ``alto'', ``sí'' y ``no''; un alfabeto $\Sigma$ que engloba un conjunto de símbolos entre los que deben figurar $\triangleright$ como símbolo inicial y $\sqcup$ como símbolo vacío; una función de transición $\delta(q, \sigma) = (p, \rho, D)$ en que $q$ es el estado actual, $\sigma$ símbolo bajo el puntero, $p$ el nuevo estado, $\rho$ el símbolo que sobreescribe a $\sigma$ y $D$ la dirección en que se moverá el puntero dadas la izquierda $\leftarrow$, derecha $\rightarrow$ y el no moverse $-$.
+
+En este reporte se mostrarán algunos ejemplos de máquinas de Turing.
+
+\section{Capicúa binario}
+Esta máquina de Turing determina si un número binario dado es capicúa, o sea, que el número es el mismo leído de derecha a izquierda o de izquierda a derecha, por ejemplo son capicúas $1, 11, 101, 10101$ y no lo son $10, 110, 10100$. En este caso, el alfabeto $\Sigma = \{ 0, 1, \triangleright, \sqcup \}$ y el conjunto de estados $K = \{ a, b, c, d, e, f, \text{alto}, \text{sí}, \text{no} \}$. La función de transición para esta máquina se encuentra en la tabla \ref{capicua} (p. \pageref{capicua}).
+
+\begin{table}[]
+	\caption{Máquina de Turing para detectar capicúas binarios}
+	\label{capicua}
+	\centering
+	\begin{tabular}{cc|c}
+	$p$ & $\sigma$ & $\delta(p, \sigma)$ \\ \hline
+	$a$ & $\triangleright$ & $(a, \triangleright, \rightarrow)$ \\
+	$a$ & $0$ & $(b, \triangleright, \rightarrow)$ \\
+	$a$ & $1$ & $(c, \triangleright, \rightarrow)$ \\
+	$b$ & $\triangleright$ & $(\text{si}, \triangleright, -)$ \\
+	$b$ & $0$ & $(b, 0, \rightarrow)$ \\
+	$b$ & $1$ & $(b, 1, \rightarrow)$ \\
+	$b$ & $\sqcup$ & $(d, \sqcup, \leftarrow)$ \\
+	$c$ & $\triangleright$ & $(\text{si}, \triangleright, -)$ \\
+	$c$ & $0$ & $(c, 0, \rightarrow)$ \\
+	$c$ & $1$ & $(c, 1, \rightarrow)$ \\
+	$c$ & $\sqcup$ & $(e, \sqcup, \leftarrow)$ \\
+	$d$ & $\triangleright$ & $(\text{si}, \triangleright, -)$ \\
+	$d$ & $0$ & $(f, \sqcup, \leftarrow)$ \\
+	$d$ & $1$ & $(\text{no}, 1, -)$ \\
+	$e$ & $\triangleright$ & $(\text{si}, \triangleright, -)$ \\
+	$e$ & $0$ & $(\text{no}, 0, -)$ \\
+	$e$ & $1$ & $(f, \sqcup, \leftarrow)$ \\
+	$f$ & $0$ & $(f, 0, \leftarrow)$ \\
+	$f$ & $1$ & $(f, 1, \leftarrow)$ \\
+	$f$ & $\sqcup$ & $(a, \sqcup, \leftarrow)$
+	\end{tabular}
+\end{table}
+
+
+\section{Duplicado de 1s}
+
+Ahora se definirá una máquina de Turing que, dada una secuencia de $1$s, regrese una secuencia que contenga los $1$s iniciales, un espacio vacío y el doble de los $1$s iniciales. Es decir, si se parte de $11$, se debe retornar $11 \sqcup 1111$. Para esta máquina se tiene el alfabeto $\Sigma = \{ 0, 1, *, \triangleright, \sqcup \}$ y los estados $K = \{ a, b, c, d, e, f, \text{alto} \}$. Esta máquina cuenta con una función de transición desplegada en la tabla \ref{duplicar} (p. \pageref{duplicar}).
+
+\begin{table}[]
+	\caption{Máquina de Turing para duplicar $1$s}
+	\label{duplicar}
+	\centering
+	\begin{tabular}{cc|c}
+	$p$ & $\sigma$ & $\delta(p, \sigma)$ \\ \hline
+
+	$a$ & $\triangleright$ & $(a, \triangleright, \rightarrow)$ \\
+	$a$ & $1$ & $(b, 0, \rightarrow)$ \\
+	$a$ & $\sqcup$ & $(f, \sqcup, \rightarrow)$ \\
+	$b$ & $1$ & $(b, 1, \rightarrow)$ \\
+	$b$ & $\sqcup$ & $(c, *, \rightarrow)$ \\
+	$c$ & $0$ & $(c, 0, \rightarrow)$ \\
+	$c$ & $\sqcup$ & $(d, 0, \rightarrow)$ \\
+	$d$ & $0$ & $(d, 0, \leftarrow)$ \\
+	$d$ & $*$ & $(e, \sqcup, \leftarrow)$ \\
+	$d$ & $\sqcup$ & $(d, 0, \leftarrow)$ \\
+	$e$ & $0$ & $(a, 1, \rightarrow)$ \\
+	$e$ & $1$ & $(a, 1, \leftarrow)$ \\
+	$f$ & $0$ & $(f, 1, \rightarrow)$ \\
+	$f$ & $\sqcup$ & $(\text{alto}, \sqcup, -)$
+	\end{tabular}
+\end{table}
+
+\section{Reflexiones finales}
+Una máquina de Turing que determina palíndromos utiliza una secuencia de estados por cada letra que quiere ser incluida en el alfabeto (adicionales a las letras especiales). Esta es una manera de recordar o almacenar información. 
+
+Otra manera de almacenar información es mediante letras de un alfabeto, como en la máquina de Turing que duplica $1$s, en que se utilizan $0$s para recordar los espacios que deben llenarse con $1$s en el estado $e$ y en el estado $f$.
+
+\bibliographystyle{plainnat}
+\bibliography{../Biblio}
+
+\end{document}
