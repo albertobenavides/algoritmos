@@ -101,7 +101,7 @@ Esta máquina de Turing determina si un número binario dado es capicúa, o sea,
 	$e$ & $1$ & $(f, \sqcup, \leftarrow)$ \\
 	$f$ & $0$ & $(f, 0, \leftarrow)$ \\
 	$f$ & $1$ & $(f, 1, \leftarrow)$ \\
-	$f$ & $\sqcup$ & $(a, \sqcup, \leftarrow)$
+	$f$ & $\triangleright$ & $(a, \triangleright, \rightarrow)$
 	\end{tabular}
 \end{table}
 
@@ -134,7 +134,8 @@ Ahora se definirá una máquina de Turing que, dada una secuencia de $1$s, regre
 	\end{tabular}
 \end{table}
 
-\section{Reflexiones finales}
+\section{Comentarios finales}
+
 Una máquina de Turing que determina palíndromos utiliza una secuencia de estados por cada letra que quiere ser incluida en el alfabeto (adicionales a las letras especiales). Esta es una manera de recordar o almacenar información. 
 
 Otra manera de almacenar información es mediante letras de un alfabeto, como en la máquina de Turing que duplica $1$s, en que se utilizan $0$s para recordar los espacios que deben llenarse con $1$s en el estado $e$ y en el estado $f$.
