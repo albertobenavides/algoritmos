@@ -139,6 +139,36 @@ Una manera exhaustiva de determinar esto consiste en realizar una \textit{búsqu
 	\label{profundidad}
 \end{figure}
 
+\section{Clique}
+
+Un conjunto $C$ es un clique de un grafo $G$ si $C \subseteq G$ y los vértices $u, v \in G \land u \neq v \implies u, v \in E(G)$ \cite{clique}. De esta manera, puede existir más de un clique en un grafo si su número de vértices (conocido como orden) es el mismo.
+
+Para encontrar un clique se puede seguir el algoritmo \ref{clique} (p. \pageref{clique}).
+
+\begin{algorithm} %or another one check
+	\caption{Algoritmo para encontrar clique.}
+	\label{clique}
+	\SetAlgoLined
+
+	\(i = 0\)\;
+	\ForEach{\(u \in G\)}{
+		\(C_i = \{u\}\)\;
+		\ForEach{\(v \in N(u)\)}{
+			\ForEach{\(t \in C_i\)}{
+				\If{\(t \in N(v)\)}{
+					\(C_i += \{v\}\)\;
+				}
+				\Else{
+					\(C_i -= \{v\}\)\;
+					\(\textbf{Romper}\)\;
+				}
+			}
+		}
+		\(i = i + 1\);
+	}
+	\Return \(\max(|C_i|)\)
+\end{algorithm}
+
 
 \bibliographystyle{plainnat}
 \bibliography{Biblio}
