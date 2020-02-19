@@ -1,0 +1,146 @@
+% https://es.overleaf.com/latex/templates/project-report/jpzczmpsdzwm
+
+%%% Preamble
+\documentclass[paper=leter, fontsize=11pt]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,mexico]{babel}
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{lmodern}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{lipsum}
+\usepackage[square,numbers]{natbib}
+
+\usepackage[protrusion=true,expansion=true]{microtype}	
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}	
+\usepackage{url}
+
+\usepackage{tikz}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\graphicspath{ {.} }
+
+\selectlanguage{spanish}
+\usepackage[spanish,onelanguage]{algorithm2e}
+
+
+%%% Custom sectioning
+\usepackage{sectsty}
+\allsectionsfont{\centering \normalfont\scshape}
+
+
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}											% No page header
+\fancyfoot[L]{}											% Empty 
+\fancyfoot[C]{}											% Empty
+\fancyfoot[R]{\thepage}									% Pagenumbering
+\renewcommand{\headrulewidth}{0pt}			% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+
+%%% Equation and float numbering
+\numberwithin{equation}{section}		% Equationnumbering: section.eq#
+\numberwithin{figure}{section}			% Figurenumbering: section.fig#
+\numberwithin{table}{section}				% Tablenumbering: section.tab#
+
+
+%%% Maketitle metadata
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
+
+\title{
+		%\vspace{-1in} 	
+		\usefont{OT1}{bch}{b}{n}
+		\normalfont \normalsize \textsc{Posgrado de Ingeniería de Sistemas} \\ [25pt]
+		\horrule{0.5pt} \\[0.4cm]
+		\huge SAT, Clique y Idset \\
+		\horrule{2pt} \\[0.5cm]
+}
+\author{
+		\normalfont 								\normalsize
+        Alberto Benavides\\[-3pt]		\normalsize
+        \today
+}
+\date{}
+
+
+%%% Begin document
+\begin{document}
+\maketitle
+\section{SAT}
+En álgebra booleana, una fórmula está dada en \textit{forma normal conjuntiva} cuando consiste de una conjunción de disyunciones que, a su vez, no incluyen variables con su propio complemento \cite{fnc}. Por ejemplo, dadas las variables $a, b, c$ las siguientes son fórmulas en forma normal conjuntiva:
+$$(a \lor b), $$
+$$ \neg a, $$
+$$a \land (b \lor \neg c),$$
+$$(a \lor b) \land (\neg c \lor b).$$
+
+El problema de satisfacibilidad booleana (SAT por su abreviatura) consiste en determinar si las variables de una fórmula dada en la forma normal conjuntiva pueden tomar valores verdaderos $\top$ o falsos $\bot$ de modo que la fórmula en sí sea verdadera $\top$ \cite{sat}. Si ninguna combinación en los valores de las variables da por resultado que la expresión sea verdadera, se dice que que el problema es \textit{no satisfacible}.
+
+Una manera exhaustiva de determinar esto consiste en realizar una \textit{búsqueda de profundidad}, representable en un árbol binario mostrado en la figura \ref{profundidad} (p. \pageref{profundidad}), donde en cada nodo a partir de la raíz se define el valor de la variable de modo que al tener valores verdaderos para cada variable se evalúa si determinada fórmula en forma normal conjuntiva es verdadera. En caso de no serlo, se utiliza un algoritmo de \textit{vuelta atrás} (\textit{backtracking} en inglés) \cite{bt} para probar con otra combinación de valores para las variables y se continúa este proceso hasta que se halle una combinación satisfacible o se terminen las combinaciones.
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}
+		
+		\node[circle,draw]{Raíz}
+		child{
+			node[circle,draw]{$ a = \top $} 
+				child{
+					node[circle,draw] {$ b = \top $}
+					child{
+						node[circle,draw] {$ c = \top $}
+					}
+					child{
+						node[circle,draw] {$ c = \bot $}
+					}
+				}
+				child[missing]{}
+				child{
+					node[circle,draw] {$ b = \bot $}
+					child{
+						node[circle,draw] {$ c = \top $}
+					}
+					child{
+						node[circle,draw] {$ c = \bot $}
+					}
+				}
+		}
+		child[missing]{}
+		child[missing]{}
+		child[missing]{}
+		child{
+			node[circle,draw]{$ a = \bot $} 
+				child{
+					node[circle,draw] {$ b = \top $}
+					child{
+						node[circle,draw] {$ c = \top $}
+					}
+					child{
+						node[circle,draw] {$ c = \bot $}
+					}
+				}
+				child[missing]{}
+				child{
+					node[circle,draw] {$ b = \bot $}
+					child{
+						node[circle,draw] {$ c = \top $}
+					}
+					child{
+						node[circle,draw] {$ c = \bot $}
+					}
+				}
+		};
+	\end{tikzpicture}
+	\caption{Grafo de búsqueda de profundidad para algoritmo de satisfacibilidad de tres variables booleanas.}
+	\label{profundidad}
+\end{figure}
+
+
+\bibliographystyle{plainnat}
+\bibliography{Biblio}
+
+\end{document}
