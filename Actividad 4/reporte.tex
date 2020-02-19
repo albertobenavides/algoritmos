@@ -169,6 +169,12 @@ Para encontrar un clique se puede seguir el algoritmo \ref{clique} (p. \pageref{
 	\Return \(\max(|C_i|)\)
 \end{algorithm}
 
+\section{Conclusiones}
+
+Para resolver estos problemas, en el peor de los casos, se deben recorrer todas las variables o nodos y compararlos entre sí, lo cual crece exponencialmente al incrementarse el número de variables o nodos en cada caso. Esto implica un gran esfuerzo computacional cuando se trata de fórmulas o grafos muy grandes (millones de variables o nodos). 
+
+Existen esfuerzos por simplificar estas búsquedas, como algoritmo de vuelta atrás mencionado, que consisten en detener una búsqueda cuando se encuentran contradicciones en el caso del problema de satisfacibilidad.
+
 
 \bibliographystyle{plainnat}
 \bibliography{Biblio}
