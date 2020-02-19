@@ -169,6 +169,28 @@ Para encontrar un clique se puede seguir el algoritmo \ref{clique} (p. \pageref{
 	\Return \(\max(|C_i|)\)
 \end{algorithm}
 
+\section{Conjunto de vértices independientes}
+
+El conjunto de vértices independientes (\textit{idset} por su abreviatura en inglés) es un problema similar al clique, en que se buscan los subconjuntos de vértices de un grafo $G$ de modo que estos vértices no formen parte de sus respectivas vecindades \cite{idset}. El algoritomo \ref{idset} (p. \pageref{idset}) muestra la forma de encontrar estos subconjuntos.
+
+\begin{algorithm} %or another one check
+	\caption{Algoritmo para encontrar \textit{idset}.}
+	\label{idset}
+	\SetAlgoLined
+
+	\(i = 0\)\;
+	\ForEach{\(u \in G\)}{
+		\(C_i = \{u\}\)\;
+		\ForEach{\(v \in G\)}{
+			\If{\(u \neq v \land v \notin N(u)\)}{
+				\(C_i += \{v\}\)\;
+			}
+		}
+		\(i = i + 1\);
+	}
+	\Return \(\max(|C_i|)\)
+\end{algorithm}
+
 \section{Conclusiones}
 
 Para resolver estos problemas, en el peor de los casos, se deben recorrer todas las variables o nodos y compararlos entre sí, lo cual crece exponencialmente al incrementarse el número de variables o nodos en cada caso. Esto implica un gran esfuerzo computacional cuando se trata de fórmulas o grafos muy grandes (millones de variables o nodos). 
