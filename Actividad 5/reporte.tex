@@ -1,0 +1,84 @@
+% https://es.overleaf.com/latex/templates/project-report/jpzczmpsdzwm
+
+%%% Preamble
+\documentclass[paper=leter, fontsize=11pt]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,mexico]{babel}
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{lmodern}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{lipsum}
+\usepackage[square,numbers]{natbib}
+
+\usepackage[protrusion=true,expansion=true]{microtype}	
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}	
+\usepackage{url}
+
+\usepackage{tikz}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\graphicspath{ {.} }
+
+\selectlanguage{spanish}
+\usepackage[spanish,onelanguage]{algorithm2e}
+
+
+%%% Custom sectioning
+\usepackage{sectsty}
+\allsectionsfont{\centering \normalfont\scshape}
+
+
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}											% No page header
+\fancyfoot[L]{}											% Empty 
+\fancyfoot[C]{}											% Empty
+\fancyfoot[R]{\thepage}									% Pagenumbering
+\renewcommand{\headrulewidth}{0pt}			% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+
+%%% Equation and float numbering
+\numberwithin{equation}{section}		% Equationnumbering: section.eq#
+\numberwithin{figure}{section}			% Figurenumbering: section.fig#
+\numberwithin{table}{section}				% Tablenumbering: section.tab#
+
+
+%%% Maketitle metadata
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
+
+\title{
+		%\vspace{-1in} 	
+		\usefont{OT1}{bch}{b}{n}
+		\normalfont \normalsize \textsc{Posgrado de Ingeniería de Sistemas} \\ [25pt]
+		\horrule{0.5pt} \\[0.4cm]
+		\huge Ejercicios NP \\
+		\horrule{2pt} \\[0.5cm]
+}
+\author{
+		\normalfont 								\normalsize
+        Alberto Benavides\\[-3pt]		\normalsize
+        \today
+}
+\date{}
+
+
+%%% Begin document
+\begin{document}
+\maketitle
+\textit{Knapsack problem} o \textbf{problema de la mochila} es un problema en que, dados $n$ elementos con pesos $omega_j, j \in [1, \ldots,  n]$ y valores $c_j, j \in [1, \ldots, n]$ junto a un entero $B$, se desea obtener un subconjunto de dichos elementos cuya suma de pesos sea como máximo $B$ y la suma de sus valores sea la máxima.
+
+El problema de decisión correspondiente al problema de la mochila consiste en determinar si existe (o no) un conjunto de soluciones cuya suma de pesos de objetos que esté por encima de un entero $y$ y siga siendo menor o igual a $B$.
+
+Ahora se procede a mostrar que el problema de la mochila pertenece a NP. Los problemas NP son aquellos que son verificables en tiempo polinomial, es decir en tiempo $\mathcal{O}(n^k)$ donde $n$ es el número de elementos y $k$ es un entero. Que un problema sea verificable quiere decir que existe un algoritmo tal que, dado un problema y su solución, sea capaz de verificar dicha solución en tiempo polinomial. El problema de la mochila requiere tiempo $\mathcal{O}(n)$ para elegir un subconjunto de elementos asignando pertenencia o ausencia de cada uno ($n$) de ellos y, de manera simultánea, sumar los pesos de los que pertenezcan al subconjunto para determinar si se encuentran en el rango mayor a $y$ y menor o igual a $B$.
+
+Por otro lado, un problema NP--completo es aquél que no puede ser resuelto en tiempo polinomial pero que, dada una solución, ésta puede ser comprobada en tiempo polinomial. Que el problema de la mochila sea resuleto en tiempo polinomial dada una solución es evidente dado que bastaría con comprobar justamente lo declarado en el párrafo anteior, a saber, que la suma de los pesos de los elementos incluidos se encuentre en el umbral definido $(y, B]$. Por otro lado, encontrar el subconjunto de elementos que resuelva el problema de la mochila requeriría un tiempo $\mathcal{O}(2^n)$ dado que habría que comprobar todos los subconjuntos de elementos cuya suma de pesos se encuentre en el rango $(y, B]$ y cada vez que el valor de un subconjunto sea superior a un valor $V = 0$, actualizar $V$ y almacenar en un subconjunto $S$ ese subconjunto. De esta manera, tras recorrer todos los posibles subconjuntos de elementos, podría determinarse el mayor.
+
+En el problema de \textbf{programación de tareas} (o \textit{task scheduling problem} en inglés) se tiene un conjunto de $n$ tareas cada una con tiempos de procesamiento $p_j, j \in [1, \ldots, n]$, ganancias $w_j, j \in [1, \ldots, n]$ y tiempos límites $d_j, j \in [1, \ldots, n]$. Este problema es una variante del problema de la mochila en la que las ganancias equivalen al valor definido para aquellos elementos y el tamaño de la mochila $B$ corresponde a cada tiempo límite $d_j$. La diferencia aquí es que se quiere superar una ganancia $W$, pero el tiempo de procesamiento para encontrar estas programaciones de tareas sigue requiriendo un tiempo $\mathcal{O}(2^n)$, por lo que se trata de un problema NP--completo.
+
+\end{document}
