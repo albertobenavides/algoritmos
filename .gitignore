@@ -1,4 +1,5 @@
 *.pdf
+*.exe
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
