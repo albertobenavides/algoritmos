@@ -92,7 +92,7 @@
 
 Los arreglos son estructuras de datos capaces de almacenar $n$ elementos. Si llamamos $t$ al tamaño en bits requerido por cada uno de esos elementos, entonces podemos decir que los arreglos reservan $nt$ bits de memoria \textit{secuencial} donde podrá alojarse dicha cantidad de elementos. 
 
-Un ejemplo de arreglos para los lenguajes programación de la familia \texttt{C} es el arreglo de caracteres, que da como resultado una cadena de texto de longitud limitada. Para fines ilustrativos, supongamos que se desea almacenar el primer nombre de contacto de una persona en un arreglo. En dicho caso, una longitud de veinte caracteres parecería suficiente para este fin, sin embargo, es poco probable que la longitud de algún nombre supere los diez caracteres. \cite{nombres}. 
+Un ejemplo de arreglos para los lenguajes programación de la familia \texttt{C} es el arreglo de caracteres, que da como resultado una cadena de texto de longitud limitada. Para fines ilustrativos, supongamos que se desea almacenar el primer nombre de contacto de una persona en un arreglo. En dicho caso, una longitud de veinte caracteres parecería suficiente para este fin, sin embargo, es poco probable que la longitud de algún nombre supere los diez caracteres \cite{nombres}. 
 
 \begin{lstlisting}[language=C++, caption=Arreglo de veinte caracteres en \texttt{C}.]
 int main()
@@ -142,7 +142,7 @@ Si para cada ejecución $p \in \{\text{arreglo}, \text{lista}\}$ se ponderara el
 $$f(p) = \frac{\tau_p}{\max(\tau_{\text{arreglo}}, \tau_{\text{lista}})} + \frac{\mu_p}{\max(\mu_{\text{arreglo}}, \mu_{\text{lista}})}.$$ 
 Ahora se podría determinar que la estructura de datos más conveniente viene dada por la $\min(f(p))$.
 
-De todas formas, estas operaciones son del tipo $\mathcal{O}(n)$ puesto que se han de agregar o recorrer los $n$ elementos determinados. La inserción de elementos no secuencial (en un lugar distinto al de la última posición utilizada), por otro lado, representa un problema para los arreglos debido a que insertar un elemento en la posición $0 <= i < n - 1$ del arreglo implica desplazar $n - i$ elementos hacia la posición siguiente, perdiendo, además, el último elemento. En el peor de los casos (si se desea insertar en el primer elemento) se trata de un procedimiento de complejidad $\mathcal{O}(n - i)$.\nocite{listas}
+De todas formas, estas operaciones son del tipo $\mathcal{O}(n)$ puesto que se han de agregar o recorrer los $n$ elementos determinados. La inserción de elementos no secuencial (en un lugar distinto al de la última posición utilizada), por otro lado, representa un problema para los arreglos debido a que insertar un elemento en la posición $0 \leq i < n - 1$ del arreglo implica desplazar $n - i$ elementos hacia la posición siguiente, perdiendo, además, el último elemento. En el peor de los casos (si se desea insertar en el primer elemento) se trata de un procedimiento de complejidad $\mathcal{O}(n - i)$.\nocite{listas}
 
 \begin{lstlisting}[language=C++, caption=Función para insertar un entero en la posición $i$ de un arreglo de $n$ elementos.]
 int a[n];
@@ -158,7 +158,7 @@ Las listas ligadas requieren $i$ operaciones para lograr esta misma inserción. 
 
 La mejor opción de entre estas dos estructuras de datos para crear un conjunto sería una lista doblemente ligada porque así como la inserción requiere menos operaciones que en los arreglos, las operaciones para la búsqueda de elementos existentes (un conjunto no tiene elementos repetidos) tienen las mismas complejidades. Encima, la cantidad de elementos de un arreglo está definida, lo que limita el uso de esta estructura a conjuntos de cardinalidad conocida, lo cual no sucede con las listas.
 
-Así como estas preferencias, existen otras registradas que suelen favorecer a las listas dada su versatilidad. Sin embargo, los arreglos suelen ser mucho más eficientes en tiempos de ejecución que las listas \nocite{arrayVSlist}. Entre los casos que los arreglos son preferidos frente a las listas se encuentra la manipulación de imágenes de tamaño definido ya que la información de sus pixeles puede vectorizarse en un arreglo de tamaño conocido.
+Así como estas preferencias, existen otras registradas que suelen favorecer a las listas dada su versatilidad. Sin embargo, los arreglos suelen ser mucho más eficientes en tiempos de ejecución que las listas\nocite{arrayVSlist}. Entre los casos que los arreglos son preferidos frente a las listas se encuentra la manipulación de imágenes de tamaño definido ya que la información de sus pixeles puede vectorizarse en un arreglo de tamaño conocido.
 
 En conclusión, se puede decir que es preferible el uso de arreglos cuando se tiene un tamaño fijo o poco variable de elementos y se realizarán operaciones secuenciales, mientras se opta por listas ligadas en caso distinto.
 
