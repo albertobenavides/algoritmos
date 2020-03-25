@@ -67,75 +67,86 @@ class MonticuloFibonacci{
     }
 
     eliminarMin(){
-        if(this.min != null){
-            if(this.min.izq == this.min){
-                this.min = null
-            } else if(this.min.izq.izq == this.min){
-                var izq = this.min.izq;
-                if(this.min.hijo == null){
-                    izq.izq = izq;
-                    izq.der = izq;
-                    this.min = izq;
-                } else{
-                    // La derecha de la izq del mín va al hijo
-                    izq.der = this.min.hijo;
-                    var t = this.min.hijo.izq;
-                    // La izq del hijo del mín va a la izq del min
-                    this.min.hijo.izq = izq;
-                    // La izq del hijo del mí va a la derecha del mín
-                    t.der = izq;
-                    izq.izq = t;
+        if(this.min != null){ // Si hay mínimo
+            var izq = this.min.izq;
+            var der = this.min.der;
+            var hijo = this.min.hijo;
 
+            if(izq == this.min){ // Si sólo hay uno
+                if(this.min.hijo != null){ // Y tiene hijos
+                    var sig = hijo;
                     var min = Infinity;
-                    var sig = izq;
-                    do {
-                        if (sig.valor < min) {
+                    do{ // Por cada hijo
+                        sig.parent = null; // Se quita el padre
+                        if(sig.valor < min){ // Se puede establecer como el nuevo mínimo
                             this.min = sig;
                             min = sig.valor;
                         }
                         sig = sig.izq;
-                    }while (sig != izq);
+                    }while(sig != hijo);
+                } else{ // Si no tiene hijos
+                    this.min = null;
                 }
-            }else{
-                var izq = this.min.izq;
-                var der = this.min.der;
-                if(this.min.hijo == null){
+            } else { // Si hay más de uno
+                if(this.min.hijo != null){ // Y tiene hijos
+                    // Se conectan los hijos con sus hermanos
+                    /*
+                    1 - 2
+                        3
+                    */
+
+                    izq.der = hijo; // 1 - 3
+                    var t = hijo.izq; // t = 3
+                    hijo.izq = izq; // 1 - 3
+                    der.izq = t; // 1 - 3
+                    t.der = der;
+
+                    // Se revisa quién es el mayor
+
+                    var sig = hijo;
+                    var min = Infinity;
+                    do{ // Por cada hijo
+                        sig.parent = null; // Se quita el padre
+                        if(sig.valor < min){ // Se puede establecer como el nuevo mínimo
+                            this.min = sig;
+                            min = sig.valor;
+                        }
+                        sig = sig.izq;
+                    }while(sig != hijo);
+                } else{ // Si no tiene hijos
                     izq.der = der;
                     der.izq = izq;
-                } else{
-                    // La derecha de la izq del mín va al hijo
-                    izq.der = this.min.hijo;
-                    var t = this.min.hijo.izq;
-                    // La izq del hijo del mín va a la izq del min
-                    this.min.hijo.izq = izq;
-                    // La izq del hijo del mí va a la derecha del mín
-                    t.der = der;
-                    der.izq = t;
-                }    
-                var min = Infinity;
-                var sig = izq;
-                do {
-                    if (sig.valor < min) {
-                        this.min = sig;
-                        min = sig.valor;
-                    }
-                    sig = sig.izq;
-                }while (sig != izq);
+                    var sig = izq;
+                    var min = Infinity;
+                    do{ // Por cada hermano
+                        if(sig.valor < min){ // Se puede establecer como el nuevo mínimo
+                            this.min = sig;
+                            min = sig.valor;
+                        }
+                        sig = sig.izq;
+                    }while(sig != hijo);
+                }
             }
         }
         if(this.min != null){
+            var raices = []
             var sig = this.min;
-            // Falta agregar qué onda cuando son uno o dos
             do {
-                this.consolidar(sig);
+                raices.push(sig);
                 sig = sig.izq;
             }while (sig != this.min);
+
+            this.consolidar(raices);
         }
     }
 
-    consolidar(actual){
+    consolidar(raices){
+        var actual = this.min;
         var sig = actual.izq;
         while (sig != actual) {
+            var izq = sig.izq;
+            var der = sig.der;
+            var hijo = sig.hijo;
             if(actual.hijos == sig.hijos){
                 if (sig.izq == actual && sig.der == actual) {
                     actual.izq = actual;
@@ -195,16 +206,21 @@ function agregar() {
     var n = new Nodo(el.value);
     el.value = '';
     A.insertar(n);
-    g.graph.nodes.splice(0,g.graph.nodes.length);
-    g.graph.edges.splice(0,g.graph.edges.length);
+    g.graph.edges.splice(0, g.graph.edges.length);
+    g.graph.nodes.splice(0, g.graph.nodes.length);
     var sig = A.min;
     do{
-            g.graph.addNode({ id: sig.valor});
+        if(A.min.valor == sig.valor){
+            g.graph.addNode({ id: sig.valor, fill: greuler.colors.BLUE});
+        } else {            
+            g.graph.addNode({ id: sig.valor, fill: greuler.colors.BLUE});
+        }
         sig = sig.izq;
     } while(sig != A.min);
     var sig = A.min;
     do{
         g.graph.addEdge({ source: sig.valor, target: sig.izq.valor});
+        sig = sig.izq;
     } while(sig != A.min);
     g.update();
     
@@ -220,7 +236,8 @@ window.onload = function () {
 
     g = greuler({
         target: '#canvas',
-        width: 640,
+        width: 800,
+        height: 640,
         data: {
           nodes: [],
           links: []
