@@ -124,7 +124,7 @@ class MonticuloFibonacci{
                             min = sig.valor;
                         }
                         sig = sig.izq;
-                    }while(sig != hijo);
+                    }while(sig != izq);
                 }
             }
         }
@@ -141,58 +141,43 @@ class MonticuloFibonacci{
     }
 
     consolidar(raices){
-        var actual = this.min;
-        var sig = actual.izq;
-        while (sig != actual) {
-            var izq = sig.izq;
-            var der = sig.der;
-            var hijo = sig.hijo;
-            if(actual.hijos == sig.hijos){
-                if (sig.izq == actual && sig.der == actual) {
-                    actual.izq = actual;
-                    actual.der = actual;
-                } else {
-                    var izq = sig.izq;
-                    var der = sig.der;
-                    izq.der = der;
-                    der.izq = izq;
-                }
-                if (actual.valor < sig.valor){
-                    sig.padre = actual;
-                    if(actual.hijo == null){
-                        actual.hijo = sig;
-                        actual.hijos = actual.hijos + 1;
-                        sig.der = sig;
-                        sig.izq = sig;
-                    } else {
-                        var t = actual.hijo.izq;
-                        actual.hijo.izq = sig;
-                        sig.der = actual.hijo;
-                        t.der = sig;
-                        sig.izq = t;
+        for (let i = 0; i < raices.length; i++) {
+            for (let j = 0; j < raices.length; j++) {
+                if(i == j || raices[i].padre != null || raices[j].padre != null){ // Si son iguales o alguno tiene padre
+                    continue; // No se comparan (porque esto es sólo para raíces distintas)
+                } else{
+                    if(raices[i].hijos == raices[j].hijos){ // si tienen la misma cantidad de hijos
+                        if (raices[i].valor < raices[j].valor){ // Si i es menor a j
+                            // j pasa a ser hijo de i
+                            var padre = raices[i];
+                            var hijo = raices[j];
+                        } else{
+                            //i pasa a ser hijo de j
+                            var padre = raices[j];
+                            var hijo = raices[i];
+                        }
+                        // Se actualizan los hermanos del que va a ser hijo
+                        hijo.izq.der = hijo.der;
+                        hijo.der.izq = hijo.izq;
+                        if (padre.hijo == null) { // Si no tenía hijos el padre
+                            padre.hijo = hijo;
+                            hijo.padre = padre;
+                            hijo.izq = hijo;
+                            hijo.der = hijo;
+                        } else{ // En caso de que tenga hijos
+                            var tIzq = padre.hijo.izq; // Se guarda el hermano izq del hijo
+                            hijo.padre = padre;
+                            padre.hijo.izq = hijo;
+                            hijo.der = padre.hijo;
+                            tIzq.der = hijo;
+                            hijo.izq = tIzq;
+                        }
+                    } else{
+                        // No pasa nada
                     }
-
-                    sig = actual.izq;
-                } else { // Si el siguiente tiene un valor menor o igual, entonces se hace padre del actual
-                    actual.padre = sig;
-                    if(actual.hijo == null){
-                        sig.hijo = actual;
-                        sig.hijos = sig.hijos + 1;
-                        sig.der = sig;
-                        sig.izq = sig;
-                    } else {
-                        var t = sig.hijo.izq;
-                        sig.hijo.izq = actual;
-                        actual.der = sig.hijo;
-                        t.der = actual;
-                        actual.izq = t;
-                    }
-
-                    actual = sig;
                 }
-            } else{
-                sig = sig.izq;
             }
+            
         }
     }
 }
@@ -220,15 +205,23 @@ function agregar() {
     var sig = A.min;
     do{
         g.graph.addEdge({ source: sig.valor, target: sig.izq.valor});
+        if (sig.padre != null) {
+            g.graph.addEdge({ source: sig.valor, target: sig.padre.valor});
+        }
         sig = sig.izq;
     } while(sig != A.min);
     g.update();
-    
+    console.clear();
+    console.log('Mínimo del montículo fibonacci');
+    console.log(A.min);
     document.getElementById('valor').focus();
 }
 
 function eliminar(){
     A.eliminarMin();
+    console.clear();
+    console.log('Mínimo del montículo fibonacci');
+    console.log(A.min);
 }
 
 window.onload = function () {
@@ -237,7 +230,6 @@ window.onload = function () {
     g = greuler({
         target: '#canvas',
         width: 800,
-        height: 640,
         data: {
           nodes: [],
           links: []
