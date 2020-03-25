@@ -172,15 +172,15 @@ class ArbolBiselado{
         var uw = 0;
         var hijo = null;
         if (actual.izq != null) {
-        hijo = actual.izq;
-        uw = dw * hijo.width;
-        this.conectar(hijo, sx, sy, uw, unit);
-        ctx.strokeStyle = '#333333';	
-        ctx.beginPath();
-        ctx.moveTo(actual.x, actual.y);
-        ctx.lineTo(hijo.x, hijo.y);
-        ctx.closePath();
-        ctx.stroke();
+            hijo = actual.izq;
+            uw = dw * hijo.width;
+            this.conectar(hijo, sx, sy, uw, unit);
+            ctx.strokeStyle = '#333333';	
+            ctx.beginPath();
+            ctx.moveTo(actual.x, actual.y);
+            ctx.lineTo(hijo.x, hijo.y);
+            ctx.closePath();
+            ctx.stroke();
         }
         sx += uw + dw;
         if (actual.der != null) {
