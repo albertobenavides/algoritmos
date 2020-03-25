@@ -22,13 +22,13 @@ class MonticuloFibonacci{
             this.min = nodo;
             return;
         } else {
-            var t = this.min.izq;
+            var izq = this.min.izq;
             this.min.izq = nodo;
             nodo.der = this.min;
-            nodo.izq = t;
-            t.der = nodo;
+            nodo.izq = izq;
+            izq.der = nodo;            
             if(nodo.valor < this.min.valor){
-                this.min = nodo
+                this.min = nodo;
             }
         }
     }
@@ -184,67 +184,6 @@ class MonticuloFibonacci{
             }
         }
     }
-    
-    dibujar(){
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        var tall = this.min.height;
-        var wide = this.min.width;
-
-        var sig = this.min;
-        do {
-            wide += sig.width * 2;
-            sig = sig.izq;
-        } while (sig != this.min);
-        var MARGIN = 15;
-        var unit = 2.5 * r;
-        var w = unit * wide + 2 * MARGIN;
-        var h = unit * tall + 2 * MARGIN;
-        canvas.width = w;
-        canvas.height = h;
-        ctx.lineWidth = 3;
-        ctx.font = "15px Verdana";
-        ctx.textAlign = "center";
-        ctx.globalCompositeOperation='destination-over';
-        
-        var sx = MARGIN;
-        var sy = MARGIN;
-        var sig = this.min;
-        do {
-            sig.x = sx;
-            sig.y = sy;
-            sx += sig.width * 50;
-            ctx.beginPath();
-            ctx.rect(sig.x - r, sig.y - r, 2 * r, 2 * r);
-            ctx.closePath();
-            ctx.stroke();
-            ctx.fillStyle = "#000000";
-            ctx.fillText(sig.valor, sig.x, sig.y + 8);
-            if (sig == this.min) {
-                ctx.fillStyle = "#ff0000";
-            } else{
-                ctx.fillStyle = "#ffffff";
-            }
-            ctx.fill();
-            
-            sig = sig.izq;
-        }while (sig != this.min)
-    }
-
-    actualizar(actual) {
-        var highest = 0;
-        var total = 1;
-        if (actual.hijo != null) {
-            actual.height = highest + 1;
-            var sig = actual.hijo;
-            do {
-                this.actualizar(sig);
-                highest = Math.max(highest, sig.height);
-                total += sig.width;
-                sig = sig.izq;
-            } while (sig != actual.hijo);
-        }
-        actual.width = total;
-    }
 }
 
 function agregar() {
@@ -256,21 +195,37 @@ function agregar() {
     var n = new Nodo(el.value);
     el.value = '';
     A.insertar(n);
-    A.dibujar();
-
+    g.graph.nodes.splice(0,g.graph.nodes.length);
+    g.graph.edges.splice(0,g.graph.edges.length);
+    var sig = A.min;
+    do{
+            g.graph.addNode({ id: sig.valor});
+        sig = sig.izq;
+    } while(sig != A.min);
+    var sig = A.min;
+    do{
+        g.graph.addEdge({ source: sig.valor, target: sig.izq.valor});
+    } while(sig != A.min);
+    g.update();
+    
     document.getElementById('valor').focus();
 }
 
 function eliminar(){
     A.eliminarMin();
-    A.dibujar();
 }
 
 window.onload = function () {
     A = new MonticuloFibonacci();
-    canvas = document.getElementById("canvas");
-    ctx = canvas.getContext("2d");
-    r = 15;
+
+    g = greuler({
+        target: '#canvas',
+        width: 640,
+        data: {
+          nodes: [],
+          links: []
+        }
+      }).update()
 
     document.getElementById('valor').addEventListener("keyup", function(event) {
         // Number 13 is the "Enter" key on the keyboard
