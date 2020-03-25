@@ -72,16 +72,46 @@ class MonticuloFibonacci{
                 this.min = null
             } else if(this.min.izq.izq == this.min){
                 var izq = this.min.izq;
-                izq.izq = izq;
-                izq.der = izq;
-                this.min = izq;
+                if(this.min.hijo == null){
+                    izq.izq = izq;
+                    izq.der = izq;
+                    this.min = izq;
+                } else{
+                    // La derecha de la izq del mín va al hijo
+                    izq.der = this.min.hijo;
+                    var t = this.min.hijo.izq;
+                    // La izq del hijo del mín va a la izq del min
+                    this.min.hijo.izq = izq;
+                    // La izq del hijo del mí va a la derecha del mín
+                    t.der = izq;
+                    izq.izq = t;
+
+                    var min = Infinity;
+                    var sig = izq;
+                    do {
+                        if (sig.valor < min) {
+                            this.min = sig;
+                            min = sig.valor;
+                        }
+                        sig = sig.izq;
+                    }while (sig != izq);
+                }
             }else{
                 var izq = this.min.izq;
                 var der = this.min.der;
-                izq.der = der;
-                der.izq = izq;
-                this.min = null;
-    
+                if(this.min.hijo == null){
+                    izq.der = der;
+                    der.izq = izq;
+                } else{
+                    // La derecha de la izq del mín va al hijo
+                    izq.der = this.min.hijo;
+                    var t = this.min.hijo.izq;
+                    // La izq del hijo del mín va a la izq del min
+                    this.min.hijo.izq = izq;
+                    // La izq del hijo del mí va a la derecha del mín
+                    t.der = der;
+                    der.izq = t;
+                }    
                 var min = Infinity;
                 var sig = izq;
                 do {
@@ -93,27 +123,66 @@ class MonticuloFibonacci{
                 }while (sig != izq);
             }
         }
-    }
-
-    conectar(actual, sx, sy, available, unit) {
-        var sig = actual.izq;
-        while (sig != actual) {
-            sig.x = sx;     
-            sig.y = unit;
-            sx += sx + (sig.width * 2);
-            ctx.strokeStyle = '#333333';	
-            ctx.beginPath();
-            ctx.moveTo(sig.x, sig.y);
-            ctx.lineTo(sig.x, sig.y);
-            ctx.closePath();
-            ctx.stroke();
-            sig = sig.izq;
+        if(this.min != null){
+            var sig = this.min;
+            // Falta agregar qué onda cuando son uno o dos
+            do {
+                this.consolidar(sig);
+                sig = sig.izq;
+            }while (sig != this.min);
         }
     }
-    
-    nodo(actual) {
-        ctx.fillStyle = "#ffffff";
-        
+
+    consolidar(actual){
+        var sig = actual.izq;
+        while (sig != actual) {
+            if(actual.hijos == sig.hijos){
+                if (sig.izq == actual && sig.der == actual) {
+                    actual.izq = actual;
+                    actual.der = actual;
+                } else {
+                    var izq = sig.izq;
+                    var der = sig.der;
+                    izq.der = der;
+                    der.izq = izq;
+                }
+                if (actual.valor < sig.valor){
+                    sig.padre = actual;
+                    if(actual.hijo == null){
+                        actual.hijo = sig;
+                        actual.hijos = actual.hijos + 1;
+                        sig.der = sig;
+                        sig.izq = sig;
+                    } else {
+                        var t = actual.hijo.izq;
+                        actual.hijo.izq = sig;
+                        sig.der = actual.hijo;
+                        t.der = sig;
+                        sig.izq = t;
+                    }
+
+                    sig = actual.izq;
+                } else { // Si el siguiente tiene un valor menor o igual, entonces se hace padre del actual
+                    actual.padre = sig;
+                    if(actual.hijo == null){
+                        sig.hijo = actual;
+                        sig.hijos = sig.hijos + 1;
+                        sig.der = sig;
+                        sig.izq = sig;
+                    } else {
+                        var t = sig.hijo.izq;
+                        sig.hijo.izq = actual;
+                        actual.der = sig.hijo;
+                        t.der = actual;
+                        actual.izq = t;
+                    }
+
+                    actual = sig;
+                }
+            } else{
+                sig = sig.izq;
+            }
+        }
     }
     
     dibujar(){
@@ -160,21 +229,21 @@ class MonticuloFibonacci{
             sig = sig.izq;
         }while (sig != this.min)
     }
-    
+
     actualizar(actual) {
         var highest = 0;
         var total = 1;
         if (actual.hijo != null) {
-            this.actualizar(actual.hijo);
-            highest = Math.max(highest, actual.hijo.height);
+            actual.height = highest + 1;
             var sig = actual.hijo;
-            while (sig != actual) {
-                total += sig.width;	
+            do {
+                this.actualizar(sig);
+                highest = Math.max(highest, sig.height);
+                total += sig.width;
                 sig = sig.izq;
-            }
+            } while (sig != actual.hijo);
         }
         actual.width = total;
-        //actual.height = highest + 1;
     }
 }
 
