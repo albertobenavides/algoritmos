@@ -66,6 +66,35 @@ class MonticuloFibonacci{
         }
     }
 
+    eliminarMin(){
+        if(this.min != null){
+            if(this.min.izq == this.min){
+                this.min = null
+            } else if(this.min.izq.izq == this.min){
+                var izq = this.min.izq;
+                izq.izq = izq;
+                izq.der = izq;
+                this.min = izq;
+            }else{
+                var izq = this.min.izq;
+                var der = this.min.der;
+                izq.der = der;
+                der.izq = izq;
+                this.min = null;
+    
+                var min = Infinity;
+                var sig = izq;
+                do {
+                    if (sig.valor < min) {
+                        this.min = sig;
+                        min = sig.valor;
+                    }
+                    sig = sig.izq;
+                }while (sig != izq);
+            }
+        }
+    }
+
     conectar(actual, sx, sy, available, unit) {
         var sig = actual.izq;
         while (sig != actual) {
@@ -163,18 +192,9 @@ function agregar() {
     document.getElementById('valor').focus();
 }
 
-function buscar(){
-    var el = document.querySelector('#valorBuscar');
-    if (el.value == '') {
-        document.getElementById('valorBuscar').focus();
-        return;
-    }
-    A.buscar(parseInt(el.value));
-    A.actualizar(A.min);
-    A.dibujar(A.min);
-
-    el.value = '';
-    document.getElementById('valorBuscar').focus();
+function eliminar(){
+    A.eliminarMin();
+    A.dibujar();
 }
 
 window.onload = function () {
@@ -190,16 +210,6 @@ window.onload = function () {
             event.preventDefault();
             // Trigger the button element with a click
             document.getElementById("agregar").click();
-        }
-    });
-
-    document.getElementById('valorBuscar').addEventListener("keyup", function(event) {
-        // Number 13 is the "Enter" key on the keyboard
-        if (event.keyCode === 13) {
-            // Cancel the default action, if needed
-            event.preventDefault();
-            // Trigger the button element with a click
-            document.getElementById("buscar").click();
         }
     });
 }
