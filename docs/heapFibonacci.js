@@ -272,7 +272,7 @@ window.onload = function () {
 
     (function(){
         if (A.min != null){
-            g.selector.highlightNode({ id: A.min.valor });
+            g.selector.highlightNode({ id: A.min.valor }); 
         }
         setTimeout(arguments.callee, 1000);
     })();
