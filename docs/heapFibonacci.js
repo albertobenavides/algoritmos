@@ -69,6 +69,7 @@ class MonticuloFibonacci{
 
     eliminarMin(){
         if(this.min != null){ // Si hay mínimo
+            nodos = nodos.splice(nodos.indexOf(this.min.valor), 1);
             var izq = this.min.izq;
             var der = this.min.der;
             var hijo = this.min.hijo;
@@ -229,14 +230,17 @@ function agregar() {
         document.getElementById('valor').focus();
         return;
     }
-    var n = new Nodo(el.value);
+    if (!nodos.includes(el.value)){
+        var n = new Nodo(el.value);
+        nodos.push(el.value);
+        A.insertar(n);
+        A.dibujar(A.min);
+        console.clear();
+        console.log('Mínimo del montículo fibonacci');
+        console.log(A.min);
+        document.getElementById('valor').focus();
+    }
     el.value = '';
-    A.insertar(n);
-    A.dibujar(A.min);
-    console.clear();
-    console.log('Mínimo del montículo fibonacci');
-    console.log(A.min);
-    document.getElementById('valor').focus();
 }
 
 function eliminar(){
@@ -248,6 +252,8 @@ function eliminar(){
 }
 
 window.onload = function () {
+    nodos = [];
+
     A = new MonticuloFibonacci();
 
     g = greuler({
