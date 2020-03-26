@@ -197,12 +197,7 @@ class MonticuloFibonacci{
         }
         var sig = actual;
         do{
-            if(sig == this.min){
-                g.graph.addNode({ id: sig.valor});
-                g.selector.getNode({ id: this.min.valor }).attr('fill', "#f00");
-            } else {            
-                g.graph.addNode({ id: sig.valor});
-            }
+            g.graph.addNode({ id: sig.valor});
             if (actual == this.min) {
                 g.graph.addEdge({ source: 'rs', target: sig.valor });
             }
@@ -274,4 +269,11 @@ window.onload = function () {
             document.getElementById("agregar").click();
         }
     });
+
+    (function(){
+        if (A.min != null){
+            g.selector.highlightNode({ id: A.min.valor });
+        }
+        setTimeout(arguments.callee, 1000);
+    })();
 }
