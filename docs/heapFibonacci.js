@@ -69,7 +69,7 @@ class MonticuloFibonacci{
 
     eliminarMin(){
         if(this.min != null){ // Si hay mínimo
-            nodos = nodos.splice(nodos.indexOf(this.min.valor), 1);
+            nodos.splice(nodos.indexOf('' + this.min.valor), 1);
             var izq = this.min.izq;
             var der = this.min.der;
             var hijo = this.min.hijo;
@@ -130,18 +130,19 @@ class MonticuloFibonacci{
             }
         }
         if(this.min != null){
-            var raices = []
-            var sig = this.min;
-            do {
-                raices.push(sig);
-                sig = sig.izq;
-            }while (sig != this.min);
-
-            this.consolidar(raices);
+            this.consolidar();
         }
     }
 
     consolidar(raices){
+        var raices = []
+        
+        var sig = this.min;
+        do {
+            raices.push(sig);
+            sig = sig.izq;
+        }while (sig != this.min);
+
         for (let i = 0; i < raices.length; i++) {
             for (let j = 0; j < raices.length; j++) {
                 if(i == j || raices[i].padre != null || raices[j].padre != null){ // Si son iguales o alguno tiene padre
@@ -174,6 +175,7 @@ class MonticuloFibonacci{
                             hijo.izq = tIzq;
                         }
                         padre.hijos = padre.hijos + 1;
+                        this.consolidar();
                     } else{
                         // No pasa nada
                     }
