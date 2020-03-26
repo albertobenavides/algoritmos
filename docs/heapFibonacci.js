@@ -218,6 +218,9 @@ class MonticuloFibonacci{
             sig = sig.izq;
         } while(sig != actual);
         g.update();
+        
+      var t = document.querySelector('.greuler');
+      t.setAttribute('width', '100%');
     }
 }
 
@@ -255,12 +258,12 @@ window.onload = function () {
 
     g = greuler({
         target: '#canvas',
-        width: 800,
+        width: '400',
         data: {
           nodes: [],
           links: []
         }
-      }).update()
+      }).update();
 
     document.getElementById('valor').addEventListener("keyup", function(event) {
         // Number 13 is the "Enter" key on the keyboard
