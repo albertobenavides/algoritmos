@@ -15,6 +15,7 @@ class MonticuloFibonacci{
     constructor(){
         this.min = null;
     }
+
     insertar(nodo){
         if (this.min == null){
             nodo.izq = nodo;
@@ -77,7 +78,7 @@ class MonticuloFibonacci{
                     var sig = hijo;
                     var min = Infinity;
                     do{ // Por cada hijo
-                        sig.parent = null; // Se quita el padre
+                        sig.padre = null; // Se quita el padre
                         if(sig.valor < min){ // Se puede establecer como el nuevo mínimo
                             this.min = sig;
                             min = sig.valor;
@@ -102,11 +103,10 @@ class MonticuloFibonacci{
                     t.der = der;
 
                     // Se revisa quién es el mayor
-
                     var sig = hijo;
                     var min = Infinity;
                     do{ // Por cada hijo
-                        sig.parent = null; // Se quita el padre
+                        sig.padre = null; // Se quita el padre
                         if(sig.valor < min){ // Se puede establecer como el nuevo mínimo
                             this.min = sig;
                             min = sig.valor;
@@ -172,6 +172,7 @@ class MonticuloFibonacci{
                             tIzq.der = hijo;
                             hijo.izq = tIzq;
                         }
+                        padre.hijos = padre.hijos + 1;
                     } else{
                         // No pasa nada
                     }
@@ -179,6 +180,46 @@ class MonticuloFibonacci{
             }
             
         }
+    }
+
+    dibujar(actual){
+        if(this.min == null){
+            g.graph.edges.splice(0, g.graph.edges.length);
+            g.graph.nodes.splice(0, g.graph.nodes.length);
+            g.update();
+            return;
+        }
+        if(actual == this.min){
+            g.graph.edges.splice(0, g.graph.edges.length);
+            g.graph.nodes.splice(0, g.graph.nodes.length);
+            g.graph.addNode({ id: 'rs', fill: greuler.colors.BROWN});
+        }
+        var sig = actual;
+        do{
+            if(sig == this.min){
+                g.graph.addNode({ id: sig.valor});
+                g.selector.getNode({ id: this.min.valor }).attr('fill', "#f00");
+            } else {            
+                g.graph.addNode({ id: sig.valor});
+            }
+            if (actual == this.min) {
+                g.graph.addEdge({ source: 'rs', target: sig.valor });
+            }
+            if (sig.hijo != null) {
+                this.dibujar(sig.hijo);
+            }
+            sig = sig.izq;
+        } while(sig != actual);
+        
+        var sig = actual;
+        do{
+            g.graph.addEdge({ source: sig.valor, target: sig.izq.valor});
+            if (sig.padre != null) {
+                g.graph.addEdge({ source: sig.valor, target: sig.padre.valor});
+            }
+            sig = sig.izq;
+        } while(sig != actual);
+        g.update();
     }
 }
 
@@ -191,26 +232,7 @@ function agregar() {
     var n = new Nodo(el.value);
     el.value = '';
     A.insertar(n);
-    g.graph.edges.splice(0, g.graph.edges.length);
-    g.graph.nodes.splice(0, g.graph.nodes.length);
-    var sig = A.min;
-    do{
-        if(A.min.valor == sig.valor){
-            g.graph.addNode({ id: sig.valor, fill: greuler.colors.BLUE});
-        } else {            
-            g.graph.addNode({ id: sig.valor, fill: greuler.colors.BLUE});
-        }
-        sig = sig.izq;
-    } while(sig != A.min);
-    var sig = A.min;
-    do{
-        g.graph.addEdge({ source: sig.valor, target: sig.izq.valor});
-        if (sig.padre != null) {
-            g.graph.addEdge({ source: sig.valor, target: sig.padre.valor});
-        }
-        sig = sig.izq;
-    } while(sig != A.min);
-    g.update();
+    A.dibujar(A.min);
     console.clear();
     console.log('Mínimo del montículo fibonacci');
     console.log(A.min);
@@ -219,6 +241,7 @@ function agregar() {
 
 function eliminar(){
     A.eliminarMin();
+    A.dibujar(A.min);
     console.clear();
     console.log('Mínimo del montículo fibonacci');
     console.log(A.min);
