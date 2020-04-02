@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montículos de fibonacci</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-3">
+        <h1>Montículo de fibonacci</h1> 
+        <h6>Alberto Benavides</h6>
+        <div class="my-3">
+            <div class="form-inline">
+                <input class="form-control form-control-sm w-25 mr-3" type="number" id="valor" placeholder="Entero">
+                <button class="btn btn-sm btn-secondary" id="agregar" onclick="agregar()">Agregar</button>
+            </div>
+        </div>
+        <div class="my-3">
+            <div class="form-inline">
+                <button class="btn btn-sm btn-secondary" id="buscar" onclick="eliminar()">Eliminar mínimo</button>
+            </div>
+        </div>
+        <div class="w-100 text-center">
+            <div id="canvas"> </div>
+        </div>
+        <div class="card">
+            <div class="card-body" id="monticulo">
+                <ul>
+                    <li>Agrega nodos de valores enteros</li>
+                    <li>Cada valor agregado será la raíz de un árbol (se ponen como hijos del nodo rs de modo ilustrativo)</li>
+                    <li>El nodo de valor mínimo es el nodo que "palpita"</li>
+                    <li>Eliminar el nodo de valor mínimo reestructura el montículo, de modo que</li>
+                    <ol>
+                        <li>Todas las raíces se comparan entre sí por pares</li>
+                        <li>Si dos raíces tienen el mismo número de hijos, la que tenga el valor mayor se vuelve hija de la que tenga el valor menor</li>
+                    </ol>
+                </ul>
+                <p>Visualización: <a href="https://mauriciopoppe.github.io/greuler/#/">greuler</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/tgdwyer/WebCola/WebCola/cola.min.js"></script>
+    <script src="greuler.min.js"></script>
+    <script src="bfs.js"></script>
+</body>
+</html>

@@ -211,12 +211,13 @@ class MonticuloFibonacci{
         
         var sig = actual;
         do{
-            g.graph.addEdge({ source: sig.valor, target: sig.izq.valor});
+            //g.graph.addEdge({ source: sig.valor, target: sig.izq.valor});
             if (sig.padre != null) {
                 g.graph.addEdge({ source: sig.valor, target: sig.padre.valor});
             }
             sig = sig.izq;
         } while(sig != actual);
+
         g.update();
         
       var t = document.querySelector('.greuler');
@@ -259,9 +260,23 @@ window.onload = function () {
     g = greuler({
         target: '#canvas',
         width: '400',
+        height: '800',
         data: {
-          nodes: [],
-          links: []
+          nodes: [{ id: 'rs', fill: greuler.colors.BROWN}],
+          links: [],
+          constraints: [
+            {
+              type: 'alignment',
+              axis: 'y',
+              offsets: [{node: 0, offset: 0}]
+            },
+            {
+              axis: 'x',
+              left: 0,
+              right: 0,
+              gap: 0
+            }
+          ]
         }
       }).update();
 
