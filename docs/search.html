@@ -8,37 +8,30 @@
 </head>
 <body>
     <div class="container mt-3">
-        <h1>Montículo de fibonacci</h1> 
+        <h1>BFS</h1> 
         <h6>Alberto Benavides</h6>
         <div class="my-3">
             <div class="form-inline">
-                <input class="form-control form-control-sm w-25 mr-3" type="number" id="valor" placeholder="Entero">
-                <button class="btn btn-sm btn-secondary" id="agregar" onclick="agregar()">Agregar</button>
+                <input class="form-control form-control-sm w-25 mr-3" type="number" id="agregar" placeholder="Entero">
+                <button class="btn btn-sm btn-secondary" id="agregarBoton" onclick="agregar()">Agregar</button>
             </div>
         </div>
         <div class="my-3">
             <div class="form-inline">
-                <button class="btn btn-sm btn-secondary" id="buscar" onclick="eliminar()">Eliminar mínimo</button>
+                <input class="form-control form-control-sm w-25 mr-3" type="number" id="buscar" placeholder="Entero">
+                <button class="btn btn-sm btn-secondary" id="buscarBoton" onclick="buscar()">Búsqueda de anchura</button>
             </div>
         </div>
-        <div class="w-100 text-center">
-            <div id="canvas"> </div>
-        </div>
-        <div class="card">
-            <div class="card-body" id="monticulo">
-                <ul>
-                    <li>Agrega nodos de valores enteros</li>
-                    <li>Cada valor agregado será la raíz de un árbol (se ponen como hijos del nodo rs de modo ilustrativo)</li>
-                    <li>El nodo de valor mínimo es el nodo que "palpita"</li>
-                    <li>Eliminar el nodo de valor mínimo reestructura el montículo, de modo que</li>
-                    <ol>
-                        <li>Todas las raíces se comparan entre sí por pares</li>
-                        <li>Si dos raíces tienen el mismo número de hijos, la que tenga el valor mayor se vuelve hija de la que tenga el valor menor</li>
-                    </ol>
-                </ul>
-                <p>Visualización: <a href="https://mauriciopoppe.github.io/greuler/#/">greuler</a></p>
+        <div class="my-3">
+            <div class="form-inline">
+                <input class="form-control form-control-sm w-25 mr-3" type="number" id="buscarP" placeholder="Entero">
+                <button class="btn btn-sm btn-secondary" id="buscarPBoton" onclick="buscarP()">Búsqueda de profundidad</button>
             </div>
         </div>
+        
+    </div>
+    <div class="w-100 text-center">
+        <div id="canvas"> </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -47,6 +40,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/tgdwyer/WebCola/WebCola/cola.min.js"></script>
     <script src="greuler.min.js"></script>
-    <script src="bfs.js"></script>
+    <script src="search.js"></script>
 </body>
 </html>
