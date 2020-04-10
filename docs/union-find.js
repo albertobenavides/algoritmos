@@ -76,8 +76,14 @@ function unir(){
             indice2 = A.nodos[i].id;
         }
     }
+
+    // Si los nodos existen
     if (indice1 > -1 && indice2 > -1){
-        A.nodos[indice2].padre = A.nodos[indice1];
+        var sig = A.nodos[indice2];
+        while (sig.padre.id != sig.id) {
+            sig = sig.padre;
+        }
+        sig.padre = A.nodos[indice1];
 
         // Se borran los renglones de las tablas
         elPadre.innerHTML = "";
@@ -122,7 +128,7 @@ function unir(){
 
             // Se redibujan las aristas si el padre es distinto de sí mismo
             if (n.padre.id != n.id){
-                g.graph.addEdge({ source: n.padre.id, target: n.id, directed: 1 });
+                g.graph.addEdge({ source: n.id, target: n.padre.id, directed: 1 });
             }
         });
 
