@@ -164,9 +164,71 @@ En este caso, la unión de dos conjuntos se realiza mediante la función de bús
     \end{tabular}
 \end{table}
 
-Unir dos conjuntos a partir de los elementos $e_1 \in C_1$ y $e_2 \in C_2$ consiste en definir qué nodo será padre del otro y luego recorrer todos los padres del nodo hijo hasta encontrar uno que no tenga ningún padre, lo que puede hacerse en tiempo $\mathcal{O}(n)$
+Unir dos conjuntos a partir de los elementos $e_1 \in C_1$ y $e_2 \in C_2$ consiste en definir qué nodo será padre del otro, aquí $e_1$ será padre de $e_2$. Luego, se recorren todos los padres del nodo hijo hasta encontrar uno que no tenga ningún padre, lo que puede hacerse en tiempo $\mathcal{O}(n)$. Una vez encontrado el nodo que no tiene padre, se le asigna como padre a $e_1$ y esto resulta en la unión de dos conjuntos representados por grafos con nodos. Una ilustración al respecto puede consutarse en la imagen \ref{ejemplo_union}.
 
-Estas implementaciones pueden consultarse en \url{https://jbenavidesv87.github.io/algoritmos/union-find.html}.
+\begin{figure}
+    \begin{subfigure}{.45\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node[draw, circle] (e1) at (0, 0) {$e_1$};
+            \node[draw, circle] (e2) at (2, 0) {$e_2$};
+            \node[draw, circle] (e3) at (4, 0) {$e_3$};
+            
+            \draw[->] (e2) -- (e3);
+        \end{tikzpicture}
+        \caption{Se desea unir $C_1 = \{e_1\}$ con $C_2 = \{e_2, e_3\}$ a partir de $e_1$ y $e_3$.}
+        \label{nodo}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{.45\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node[draw, circle] (e1) at (0, 0) {$e_1$};
+            \node[draw, circle] (e2) at (2, 0) {$e_2$};
+            \node[draw, circle] (e3) at (4, 0) {$e_3$};
+            
+            \draw[->] (e1) -- (e2);
+            \draw[->] (e2) -- (e3);
+        \end{tikzpicture}
+        \caption{Como $e_3$ tiene por padre a $e_2$ quien no tiene padre, se le asigna $e_1$ como padre a $e_2$.}
+        \label{grafo}
+    \end{subfigure}
+
+    \caption{Ejemplo de unión de un conjunto $C_1 = \{e_1\}$ con un conjunto $C_2 = \{e_2, e_3\}$.}
+    \label{ejemplo_union}
+\end{figure}
+
+Una implementación interactiva de esto puede consultarse en \url{https://jbenavidesv87.github.io/algoritmos/union-find.html}. La implementación funciona a partir de tres métodos de entrada (véase la figura \ref{pantalla_inicio}). El primero permite crear conjuntos con un elemento único, representados por nodos disjuntos. Los otros dos métodos de entrada permiten especificar el valor del elemento del primer conjunto que desea unirse con el valor del elemento de un segundo conjunto.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{1.png}
+    \caption{Pantalla inicial del interactivo desarrollado.}
+    \label{pantalla_inicio}
+\end{figure}
+
+Las figuras \ref{agregado_nodos, union_uno, union_dos} muestran, en ese orden, el ejemplo de agregado de nodos, unión entre nodos disjuntos y unión de dos conjuntos disjuntos a partir de dos de sus elementos.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{2.png}
+    \caption{Ejemplo de agregado de tres elementos con valores $1, 2, 3, 4$.}
+    \label{agregado_nodos}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{5.png}
+    \caption{Unión del nodo $1$ con el $2$ y el $3$ con el $4$.}
+    \label{union_uno}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{6.png}
+    \caption{Ejemplo de unión del nodo $3$ con el $1$.}
+    \label{union_dos}
+\end{figure}
 
 \bibliographystyle{plainnat}
 \bibliography{Biblio}
