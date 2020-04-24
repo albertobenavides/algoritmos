@@ -1,0 +1,139 @@
+% https://es.overleaf.com/latex/templates/project-report/jpzczmpsdzwm
+
+%%% Preamble
+\documentclass[paper=leter, fontsize=11pt]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,mexico]{babel}
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{lmodern}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{lipsum}
+\usepackage[square,numbers]{natbib}
+
+\usepackage[protrusion=true,expansion=true]{microtype}	
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}
+\usepackage{url}
+
+\usepackage{booktabs}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,matrix, arrows.meta}
+
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{listings}
+\lstdefinestyle{mystyle}{
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+\lstset{style=mystyle}
+\renewcommand{\lstlistingname}{Código}
+
+\graphicspath{ {py/} }
+
+\selectlanguage{spanish}
+\usepackage[spanish,onelanguage,ruled]{algorithm2e}
+
+
+%%% Custom sectioning
+\usepackage{sectsty}
+\allsectionsfont{\centering \normalfont\scshape}
+
+
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}											% No page header
+\fancyfoot[L]{}											% Empty 
+\fancyfoot[C]{}											% Empty
+\fancyfoot[R]{\thepage}									% Pagenumbering
+\renewcommand{\headrulewidth}{0pt}			% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+
+%%% Equation and float numbering
+\numberwithin{equation}{section}		% Equationnumbering: section.eq#
+\numberwithin{figure}{section}			% Figurenumbering: section.fig#
+\numberwithin{table}{section}				% Tablenumbering: section.tab#
+
+
+%%% Maketitle metadata
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
+
+%%% https://tex.stackexchange.com/a/118217
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\usepackage{amsmath}
+
+\usepackage{tikz}
+
+\title{
+		%\vspace{-1in} 	
+		\usefont{OT1}{bch}{b}{n}
+		\normalfont \normalsize \textsc{Posgrado de Ingeniería de Sistemas} \\ [25pt]
+		\horrule{0.5pt} \\[0.4cm]
+		\huge Análisis de algoritmos promedio: Merge sort \\
+		\horrule{2pt} \\[0.5cm]
+}
+\author{
+		\normalfont 								\normalsize
+        Alberto Benavides\\[-3pt]		\normalsize
+        \today
+}
+\date{}
+
+
+%%% Begin document
+\begin{document}
+\maketitle
+
+\section{Merge sort} \nocite{aa}
+El algoritmo de \textit{merge sort} parte de un arreglo $A$ de $n$ elementos que desean ordenarse a partir de un critero dado. En el peor de los casos, el algoritmo
+\begin{itemize}
+    \item divide el arreglo en dos arreglos de tamaño $n/2$ hasta que todos los arreglos tengan tamaño de 1, lo que se logra en $\mathcal{O}(n-1)$,
+    \item compara y combina en un arreglo todos los elementos entre sí por pares de arreglos, reordenándolos, en el peor de los casos, en tiempo $\mathcal{O}(n-1)$,
+\end{itemize}
+de donde se tiene $\mathcal{O}((n-1) * (n-1)) = \mathcal{O}(n^2)$. Sin embargo, esto sucedería en un arreglo en que se deba hacer intercambios en todos los pares, por ejemplo
+$$[4,0,6,2,5,1,7,3].$$
+
+Aquí, primero se separa el arreglo por la mitad y así sucesivamente hasta llegar a arreglos de un elemento:
+$$[4,0,6,2]; [5,1,7,3]$$
+$$[4,0]; [6,2]; [5,1]; [7,3]$$
+$$[4]; [0]; [6]; [2]; [5]; [1]; [7]; [3].$$
+
+Luego se comparan y unen todos los elementos entre sí por pares de arreglos, ordenando, en este caso, en todos los niveles el máximo de veces:
+$$[4, 0]; [6, 2]; [5, 1]; [7, 3]$$
+$$[0, 2, 4, 6]; [1, 3, 5, 7]$$
+$$[0, 2, 4, 6]; [1, 3, 5, 7]$$
+$$[0, 1, 2, 3, 4, 5, 6, 7].$$
+
+Esto sucede porque cada vez que se ordenan elementos, se deben cambiar de lado. Aún así, para cada tamaño de elementos de un arreglo, sólo existe un caso en el que se deban reordenar todos los elementos en todos los niveles. Este arreglo para el peor caso en cada tamaño de arreglo se pueden obtener mediante un algoritmo \cite{worst_merge} que consiste en partir de los dos peores algoritmos para tamaños de arregos de uno y dos elementos, a saber $[1]$ y $[2, 1]$. A partir de ellos se puede calcular recursivamente el arreglo de $x$ elementos para el peor caso del \textit{merge sort}. Para ello,
+\begin{itemize}
+    \item se toman los peores arreglos de tamaños $a$ y $b$ que cumplan $a + b = x$,
+    \item se duplican los elementos de ambos arreglos,
+    \item se resta uno a cada elemento del arreglo con menos elementos, y
+    \item se forma un arreglo que lleve primero los elementos del arreglo de menos elementos y luego los del restante.
+\end{itemize}
+
+Con todo, para el caso promedio se puede suponer que no se reemplazarán todos los elementos, por lo que bastaría con separar y luego unir los elementos de cada nivel en tiempo $\mathcal{O}(2n)$ y hacerlo $\log_2 n$ veces, pues ese es el número de niveles que se forman, por lo que la complejidad computacional esperada en promedio es $\mathcal{O}(2n \log_2 n)$.
+
+
+\bibliographystyle{plainnat}
+\bibliography{Biblio}
+
+\end{document}
