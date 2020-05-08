@@ -102,25 +102,19 @@
 \begin{document}
 \maketitle
 
-\section{Análisis amortizado} \nocite{aa} \nocite{amortized-analysis} \nocite{union-find}
-En el estudio de la complejidad computacional de los algoritmos, el \textit{análisis amortizado} pretende definir el costo promedio de los peores casos a ejecutar de una serie de operaciones. Esto se logra sumando los costos de operación en su peor caso, divididos entre $n$ operaciones que se realicen. Los análisis de costo amortizado se utilizan para demostrar que en promedio, una serie de operaciones representa un costo de operación bajo pese a que tenga que ejecutar operaciones de costo elevado.
+\section{Cubierta convexa}
+Una \textbf{cubierta convexa} consiste en un conjunto más pequeño $C$ de elementos cualesquiera, representados habitualmente por puntos en un plano cartesiano bidimensional, tales que dos puntos $p, q \in C, \overline{pq} \subset C$. Intuitivamente sería el elástico que se ajusta exactamente a los puntos más externos de un conjunto de puntos.
 
-Existen tres maneras de realizar un análisis amortizado: El \textit{análisis general}, el \textit{método contable} y el \textit{método potencial}. El primero implica encontrar el peor caso para todas las operaciones y luego dividir la suma de los peores casos entre el número de operaciones. El segundo toma en cuenta el impacto que tienen las operaciones realizadas con las que les siguen. Se llama método contable porque simula el cálculo del impacto de una deuda de las operaciones de mayor costo y lo solventa mediante operaciones de bajo costo infladas, de modo que el excedente que se paga en las operaciones de bajo costo amortiza el de las operaciones más costosas. El último toma en cuenta el costo del conjunto de operaciones al asignar diferencias de costos entre los estados del proceso, de manera que la diferencia entre los costos de los estados inicial y final da por resultado el costo amortizado del conjunto de operaciones.
+Existen muchas maneras de abordar este problema que parten de comparar todas los segmentos de recta de todas las combinaciones de pares de $n$ puntos que se pueden formar entre $p$ y $q$ donde $p \neq q$ con el resto de puntos $r != p$ y $r != q$ para definir por posición, intersección y otros métodos, cuáles puntos son los que forman parte de la cubierta convexa. En cualquiera de estas aproximaciones, el peor de los casos tiene complejidad $\mathcal{O}(n^3)$ o requiere combinatorias del tipo $\binom{n}{3}$, lo cual ``está horriblemente mal'' en palabras de mi profesora Satu Elisa Schaeffer. Para evitar llegar a este tipo de complejidades, se pueden utilizar otras estrategias. Aquí se implementará la de \textbf{dividir y conquistar}.
 
-\section{Unión--encontrar}
-El algoritmo \textit{unión--encontrar} sirve para almacenar estructuras de datos dinámicos al tratarlos como conjuntos por asignarles identificadores únicos a sus elementos. Las operaciones que este algoritmo realiza son las de 
-\begin{itemize}
-    \item \texttt{HacerConjunto}: Crea un conjunto $C$ de un solo elemento $x$ y establece a dicho elemento como su \textbf{representante}. Esto se logra en tiempo $\mathcal{O}(1)$ en el peor de los casos.
-    \item \texttt{Unir}: A partir de dos elementos $x$ y $y$, une los dos subconjuntos que los contienen y establece a uno de los representantes como el representante del nuevo conjunto: $x \in C_1, y \in C_2, C_1 U C_2$. El tiempo de esta operación es consiste primero en encontrar $x$ y $y$ en los subconjuntos. Si suponemos que la cardinalidad entre conjuntos podría ser $n/2$ en el peor de los casos, entonces esta búsqueda tiene complejidad $\mathcal{O}(n / 2 + n / 2) = \mathcal{O}(n)$.
-    \item \texttt{Buscar}: Devuelve el representante de un conjunto en tiempo $\mathcal{1}$.
-\end{itemize}
+\section{Dividir y conquistar}
+Análogamente al hecho de que hay muchas formas de aproximarse a la solución de la cubierta convexa mediante el recorrido de la combinatoria de todos los puntos, también hay diversas maneras de implementar un algoritmo de dividir y conquistar para este problema. Uno es el propuesto por la Dra. Satu Elisa Schaeffer en donde se parten los puntos en conjutos separados por líneas verticales (todo esto definido en \cite{aa}).
 
-Ahora se procederá por análisis general para elaborar el análisis amortizado del algoritmo unir--encontrar. Primero se define una cantidad $m$ de ejecuciones de esta secuencia para $n$ elementos tal que $m = n - 1$. Así
-\begin{enumerate}
-    \item primero se hacen $n$ operaciones de \texttt{HacerConjunto} con tiempo $\mathcal{O}(n)$; y
-    \item por último se realiza $n-1$ veces la operación \texttt{Unir} para cada par de conjuntos, lo cual implica $\mathcal{O}(n (n -1)) = \mathcal{O}(n^2)$.
-\end{enumerate}
-Como este proceso se realiza $m = n - 1$ veces, entonces se puede dividir $\mathcal{O}(n^2) / (n - 1)$ para concluir que un análisis amortizado del algoritmo unión--encontrar implica un tiempo de cómputo de aproximadamente $\mathcal{O}(n)$.
+Para este reporte, sin embargo, se utiliza otra aproximación en la cual se encuentran primero los puntos con mayor y menor valor (llamémoslos $y_{\text{mín}}$ y $y_{\text{máx}}$) en el eje vertical ($y$). Una semirrecta que los une separa el conjunto de puntos en dos subconjuntos que en aras a la simplicidad se llamarán \textbf{subconjunto izquierdo} y \textbf{subconjunto derecho}. Los puntos de cada subconjunto se conocen por el producto cruz entre la recta y la proyección de los puntos con cualquiera de los puntos que forma la recta que los separa. Estas operaciones requieren complejidad $\mathcal{O}(n)$ y trazar la subrecta $\mathcal{O}(1)$. 
+
+Luego, se procede recursivamente a encontrar el punto más lejano $p_{\text{máx}}$ de la recta formada por los dos puntos iniciales $p_a, p_b$ (para las primeras instancias éstos serían los puntos $y_{\text{mín}}$ y $y_{\text{máx}}$) para cada subconjunto generado por el corte definido por la subrecta $\overline{y_{\text{mín}} y_{\text{máx}}}$. Ahora se unen los puntos iniciales $p_a. p_b$ con el punto más lejano $p_{\text{máx}}$ y se procede recursivamente a distinguir los puntos más a la izquierda o más a la derecha según sea el subconjunto que inicialmente se escogió para proceder. Por tratarse de una operación recursiva, esto se logra en tiempo $\mathcal{O}(\log{n})$ para repetir las operaciones mencionadas en el párrafo anterior, por lo que se espera una complejidad de $\mathcal{O}((n + 1) \log{n})$.
+
+El algoritmo y su implementacion en \texttt{python} pueden implementarse en este cuaderno de Jupyter alojado en \url{https://tinyurl.com/y7nw8mco}. Una animación del proceso se halla en \url{https://tinyurl.com/y7nw8mco}.
 
 \bibliographystyle{plainnat}
 \bibliography{Biblio}
