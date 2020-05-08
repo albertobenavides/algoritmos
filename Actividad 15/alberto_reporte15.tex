@@ -41,7 +41,7 @@
 \lstset{style=mystyle}
 \renewcommand{\lstlistingname}{Código}
 
-\graphicspath{ {py/} }
+\graphicspath{ {img/} }
 
 \selectlanguage{spanish}
 \usepackage[spanish,onelanguage,ruled]{algorithm2e}
@@ -103,18 +103,55 @@
 \maketitle
 
 \section{Cubierta convexa}
-Una \textbf{cubierta convexa} consiste en un conjunto más pequeño $C$ de elementos cualesquiera, representados habitualmente por puntos en un plano cartesiano bidimensional, tales que dos puntos $p, q \in C, \overline{pq} \subset C$. Intuitivamente sería el elástico que se ajusta exactamente a los puntos más externos de un conjunto de puntos.
+Una \textbf{cubierta convexa} consiste en el conjunto más pequeño $C$ de elementos cualesquiera, representados habitualmente por puntos en un plano cartesiano bidimensional, tales que dos puntos $p, q \in C, \overline{pq} \subseteq C$. Intuitivamente sería el elástico que se ajusta exactamente a los puntos más externos de un conjunto de puntos.
 
-Existen muchas maneras de abordar este problema que parten de comparar todas los segmentos de recta de todas las combinaciones de pares de $n$ puntos que se pueden formar entre $p$ y $q$ donde $p \neq q$ con el resto de puntos $r != p$ y $r != q$ para definir por posición, intersección y otros métodos, cuáles puntos son los que forman parte de la cubierta convexa. En cualquiera de estas aproximaciones, el peor de los casos tiene complejidad $\mathcal{O}(n^3)$ o requiere combinatorias del tipo $\binom{n}{3}$, lo cual ``está horriblemente mal'' en palabras de mi profesora Satu Elisa Schaeffer. Para evitar llegar a este tipo de complejidades, se pueden utilizar otras estrategias. Aquí se implementará la de \textbf{dividir y conquistar}.
+Existen muchas maneras de abordar este problema que parten de comparar todas los segmentos de recta de todas las combinaciones de pares de $n$ puntos que se pueden formar entre $p$ y $q$ donde $p \neq q$ con el resto de puntos $r \neq p$ y $r \neq q$ para definir por posición, intersección y otros métodos, cuáles puntos son los que forman parte de la cubierta convexa. En cualquiera de estas aproximaciones, el peor de los casos tiene complejidad $\mathcal{O}(n^3)$ o requiere combinatorias del tipo $\binom{n}{3}$, lo cual ``está horriblemente mal'' en palabras de mi profesora Satu Elisa Schaeffer. Para evitar llegar a este tipo de complejidades, se pueden utilizar otras estrategias. Aquí se implementará la de \textbf{dividir y conquistar} y la de la \textbf{cubierta rápida} (\textit{quick hull} en inglés).
 
-\section{Dividir y conquistar}
-Análogamente al hecho de que hay muchas formas de aproximarse a la solución de la cubierta convexa mediante el recorrido de la combinatoria de todos los puntos, también hay diversas maneras de implementar un algoritmo de dividir y conquistar para este problema. Uno es el propuesto por la Dra. Satu Elisa Schaeffer en donde se parten los puntos en conjutos separados por líneas verticales (todo esto definido en \cite{aa}).
+\section{Dividir y conquistar y cubierta rápida}
+Análogamente al hecho de que hay muchas formas de aproximarse a la solución de la cubierta convexa mediante el recorrido de la combinatoria por pares de todos los puntos, también hay diversas maneras de implementar un algoritmo de dividir y conquistar para este problema. Uno es el explicado por la Dra. Satu Elisa Schaeffer en donde se parten los puntos en conjutos separados por líneas verticales (todo esto definido en \cite{aa}).
 
-Para este reporte, sin embargo, se utiliza otra aproximación en la cual se encuentran primero los puntos con mayor y menor valor (llamémoslos $y_{\text{mín}}$ y $y_{\text{máx}}$) en el eje vertical ($y$). Una semirrecta que los une separa el conjunto de puntos en dos subconjuntos que en aras a la simplicidad se llamarán \textbf{subconjunto izquierdo} y \textbf{subconjunto derecho}. Los puntos de cada subconjunto se conocen por el producto cruz entre la recta y la proyección de los puntos con cualquiera de los puntos que forma la recta que los separa. Estas operaciones requieren complejidad $\mathcal{O}(n)$ y trazar la subrecta $\mathcal{O}(1)$. 
+Para este reporte, sin embargo, se utiliza otra aproximación en la cual se encuentran en el conjunto los puntos con mayor y menor valor (llamémoslos $y_{\text{mín}}$ y $y_{\text{máx}}$) en el eje vertical $Y$. Una semirrecta que los une separa el conjunto de puntos en dos subconjuntos que en aras a la simplicidad se llamarán \textbf{subconjunto izquierdo} y \textbf{subconjunto derecho}. Los puntos de cada subconjunto se conocen por el producto cruz entre la recta y la proyección de los puntos con cualquiera de los puntos que forma la recta que los separa. Estas operaciones requieren complejidad $\mathcal{O}(n)$ y trazar la subrecta $\mathcal{O}(1)$. 
 
-Luego, se procede recursivamente a encontrar el punto más lejano $p_{\text{máx}}$ de la recta formada por los dos puntos iniciales $p_a, p_b$ (para las primeras instancias éstos serían los puntos $y_{\text{mín}}$ y $y_{\text{máx}}$) para cada subconjunto generado por el corte definido por la subrecta $\overline{y_{\text{mín}} y_{\text{máx}}}$. Ahora se unen los puntos iniciales $p_a. p_b$ con el punto más lejano $p_{\text{máx}}$ y se procede recursivamente a distinguir los puntos más a la izquierda o más a la derecha según sea el subconjunto que inicialmente se escogió para proceder. Por tratarse de una operación recursiva, esto se logra en tiempo $\mathcal{O}(\log{n})$ para repetir las operaciones mencionadas en el párrafo anterior, por lo que se espera una complejidad de $\mathcal{O}((n + 1) \log{n})$.
+Luego, se procede recursivamente a encontrar el punto más lejano $p_{\text{máx}}$ de la recta formada por los dos puntos iniciales $p_a, p_b$ (para las primeras instancias éstos serían los puntos $y_{\text{mín}}$ y $y_{\text{máx}}$) para cada subconjunto generado por el corte definido por la subrecta $\overline{y_{\text{mín}} y_{\text{máx}}}$. Este procedimiento es el conocido como cubierta rápida.
 
-El algoritmo y su implementacion en \texttt{python} pueden implementarse en este cuaderno de Jupyter alojado en \url{https://tinyurl.com/y7nw8mco}. Una animación del proceso se halla en \url{https://tinyurl.com/y7uaqtsu}.
+Ahora se unen los puntos iniciales $p_a. p_b$ con el punto más lejano $p_{\text{máx}}$ y se procede recursivamente a distinguir los puntos más a la izquierda o más a la derecha según sea el subconjunto que inicialmente se escogió para proceder. Por tratarse de una operación recursiva, esto se logra en tiempo $\mathcal{O}(\log{n})$ para repetir las operaciones mencionadas en el párrafo anterior, por lo que se espera una complejidad de $\mathcal{O}((n + 1) \log{n})$.
+
+El algoritmo y su implementacion en \texttt{python} pueden implementarse en este cuaderno de Jupyter alojado en \url{https://tinyurl.com/y7nw8mco}. Una animación del proceso se halla en \url{https://tinyurl.com/y7uaqtsu}. Las imágenes de esta animación se presentan en las figuras \ref{0, 1, 2, 5, 8}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{0.png}
+    \caption{Conjunto de $20$ puntos con posiciones bidimensionales al azar dentro de los rangos $0, 1$.}
+    \label{0}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{1.png}
+    \caption{Semirrecta que une los puntos de mayor y menor valor de altura $y_{\text{mín}}, y_{\text{mín}}$. Se agrega a las etiquetas de los puntos la letra minúscula inicial del subconjunto al que pertenecen.}
+    \label{1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{2.png}
+    \caption{Se agrega el punto más extremo para el subcojunto de la izquierda.}
+    \label{2}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{5.png}
+    \caption{Todos los puntos más extremos agregados de lado izquierdo.}
+    \label{5}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{8.png}
+    \caption{Todos los puntos agregados del lado derecho. Fin del algoritmo.}
+    \label{8}
+\end{figure}
 
 \bibliographystyle{plainnat}
 \bibliography{Biblio}
