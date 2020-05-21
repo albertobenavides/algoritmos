@@ -1,0 +1,148 @@
+% https://es.overleaf.com/latex/templates/project-report/jpzczmpsdzwm
+
+%%% Preamble
+\documentclass[paper=leter, fontsize=11pt]{scrartcl}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,mexico]{babel}
+\usepackage[T1]{fontenc}    % use 8-bit T1 fonts
+\usepackage{lmodern}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{lipsum}
+\usepackage[square,numbers]{natbib}
+
+\usepackage[protrusion=true,expansion=true]{microtype}	
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage[pdftex]{graphicx}
+\usepackage{url}
+ 
+\usepackage{booktabs}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning,matrix, arrows.meta}
+
+\usepackage{caption} 
+\usepackage{subcaption}
+
+\usepackage{listings}
+\lstdefinestyle{mystyle}{
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+\lstset{style=mystyle}
+\renewcommand{\lstlistingname}{Código}
+
+\graphicspath{ {img/} }
+
+\selectlanguage{spanish}
+\usepackage[spanish,onelanguage,ruled]{algorithm2e}
+
+
+%%% Custom sectioning
+\usepackage{sectsty}
+\allsectionsfont{\centering \normalfont\scshape}
+
+
+%%% Custom headers/footers (fancyhdr package)
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}											% No page header
+\fancyfoot[L]{}											% Empty 
+\fancyfoot[C]{}											% Empty
+\fancyfoot[R]{\thepage}									% Pagenumbering
+\renewcommand{\headrulewidth}{0pt}			% Remove header underlines
+\renewcommand{\footrulewidth}{0pt}				% Remove footer underlines
+\setlength{\headheight}{13.6pt}
+
+
+%%% Equation and float numbering
+\numberwithin{equation}{section}		% Equationnumbering: section.eq#
+\numberwithin{figure}{section}			% Figurenumbering: section.fig#
+\numberwithin{table}{section}				% Tablenumbering: section.tab#
+
+
+%%% Maketitle metadata
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} 	% Horizontal rule
+
+%%% https://tex.stackexchange.com/a/118217
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\usepackage{amsmath}
+
+\usepackage{tikz}
+
+\title{
+		%\vspace{-1in} 	
+		\usefont{OT1}{bch}{b}{n}
+		\normalfont \normalsize \textsc{Posgrado de Ingeniería de Sistemas} \\ [25pt]
+		\horrule{0.5pt} \\[0.4cm]
+		\huge Algoritmo aleatorizado para detección de números primos \\
+		\horrule{2pt} \\[0.5cm]
+}
+\author{
+		\normalfont 								\normalsize
+        Alberto Benavides\\[-3pt]		\normalsize
+        \today
+}
+\date{}
+
+
+%%% Begin document
+\begin{document}
+\maketitle
+
+\section{Introducción}
+
+Se sabe que la cantidad aproximada de números primos en los primeros $n$ números naturales viene dada por la expresión $\frac{n}{\log{n}}$ y que, por el teorema de números primos de Lagrange, para un número de $m$ dígitos existe una probabilidad de $1 / m$ de ser primo. Una manera de determinar si un número $x$ es primo consiste en calcular $p \bmod a, a = [2, \sqrt{x}], a \in \mathbb{N}$ de modo que $x$ es primo si todos los módulos dan resultados distintos a cero, mientras que no sería primo si algún módulo da por resultado cero. Este método resulta lento si se desea saber si un número muy grande es primo. Es por esto que se puede optar por aproximaciones distintas para resolver este problema de decisión.
+
+En relación con lo anterior, existen dos tipos de \textit{algoritmos aleatorizados}, 
+\begin{itemize}
+    \item los algoritmos de Monte Carlo que obtienen soluciones con márgenes de error en poco tiempo mediante la aleatorización de valores de entrada, y
+    \item los algoritmos de Las Vegas en que se obtiene un resultado exacto a costa de un tiempo de cómputo aleatorio que depende de iteraciones que se realizan de algoritmos de Monte Carlo.
+\end{itemize} \nocite{aa}
+
+Con la combinación de estas metodologías y tomando en cuenta el pequeño teorema de Fermat, que define que para un número primo $p$ se cumple, para cada número $1 < a < p - 1$ coprimo de $p$, que $a^{p - 1} \equiv 1 \pmod p$, se puede realizar un algoritmo aleatorizado para determinar si $p$ es primo que genere $k$ números $a$ al azar para probar la condición del pequeño teorema de Fermat, mismo que se muestra en el algoritmo \ref{esprimo}. En este algoritmo consiste la prueba de Miller-Rabin\cite{primality_tests}. En este algoritmo, se le llama \textit{testigos} a los números compuestos $a$ que niegan las dos condiciones del algoritmo.
+
+\begin{algorithm} %or another one check
+    \SetAlgoLined
+    \For{\(i \in k\)}{
+        Elegir $a$ aleatorio de $[2, p-1]$ \;
+        \If{\( \text{m.c.d.}(1, p) \neq 1 \)}{
+            \Return \( \bot \)\;
+        }
+        \If{\( a^{p - 1} \bmod p \neq 1 \)}{
+            \Return \( \bot \)\;
+        }
+    }
+    \Return \( \top \)
+
+    \caption{Algoritmo aleatorizado para determinar si un número dado es primo.}
+    \label{esprimo}
+\end{algorithm}
+
+\section{Probabilidad}
+
+Cada iteración de este algoritmo tiene tres posibles resultados:
+\begin{itemize}
+    \item Si $p$ es primo, siempre se retorna $\top$.
+    \item Si $p$ es compuesto y se retorna $\bot$, $a$ es testigo de que $p$ es compuesto.
+    \item Si $p$ es compuesto y se retorna $\top$. Esto es un falso positivo.
+\end{itemize}
+
+Interesa saber la probabilidad de veces en que el tercer caso sucedería. Se sabe que existen ciertos números compuestos que pasan la prueba de este algoritmo, llamados números Carmichael, como el $561$. Experimentalmente se ha demostrado que estos números dan falsos positivos en la prueba de Miller-Rabin con una probabilidad $P(p \text{ es primo}) \leq 1/4$ de las ocasiones \cite{primality_tests}. Por esto se puede concluir que después de $i$ iteraciones en las que no se cumplan las condiciones de la prueba, la probabilidad $P(p \text{ es compuesto}) = (3/4)^i$.
+
+\bibliographystyle{plainnat}
+\bibliography{Biblio}
+
+\end{document}
